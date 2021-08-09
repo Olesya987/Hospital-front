@@ -1,30 +1,39 @@
 import React, { useState } from "react";
 import { Route, Switch, useHistory, Redirect } from "react-router-dom";
 import axios from "axios";
+import {
+  IconButton,
+  OutlinedInput,
+  InputLabel,
+  InputAdornment,
+  FormControl,
+  TextField,
+  Button,
+  Snackbar,
+} from "@material-ui/core";
+import { Visibility, VisibilityOff } from "@material-ui/icons";
+import MuiAlert from '@material-ui/lab/Alert';
+import CloseIcon from "@material-ui/icons/Close";
 import "./Reg.scss";
-import IconButton from "@material-ui/core/IconButton";
-import Input from "@material-ui/core/Input";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
-import InputLabel from "@material-ui/core/InputLabel";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import Button from "@material-ui/core/Button";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const Reg = ({ setAuthReg }) => {
   const history = useHistory();
 
   const [user, setUser] = useState({});
-  const [passCorrect, setPass] = useState(false);
 
-  const [values, setValues] = React.useState({
+  const [state, setState] = useState({
+    open: false,
+    text: "",
+    vertical: "top",
+    horizontal: "center",
+  });
+  const [values, setValues] = useState({
     login: "",
-    amount: "",
     password: "",
-    weight: "",
-    weightRange: "",
     showPassword: false,
     showPasswordRepeat: false,
     passwordRepeat: "",
@@ -42,20 +51,27 @@ const Reg = ({ setAuthReg }) => {
     setValues({ ...values, showPasswordRepeat: !values.showPasswordRepeat });
   };
   const checkPass = () => {
-    let flag1 = true;
-    let flag3 = false;
     const regexp = /((?=.*[0-9])(?=.*[a-zA-Z]).{6,})/g;
-    if (regexp.test(values.password)) flag3 = true;
-    if (/[а-яА-Я]/.test(values.password)) flag1 = false;
+    return regexp.test(values.password) && /[а-яА-Я]/.test(values.password);
+  };
 
-    return flag1 && flag3;
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setState({
+      open: false,
+      text: "",
+      vertical: "top",
+      horizontal: "center",
+    });
   };
 
   const goToAuth = () => {
     setAuthReg({
       text: "Вход в систему",
     });
-
     history.push("/authorization");
   };
 
@@ -75,21 +91,15 @@ const Reg = ({ setAuthReg }) => {
           password: formData.get("input-password"),
         })
         .then((res) => {
-          setUser({
-            login: res.data.login,
-            token: res.data.token,
-          });
-          history.push(`/appointments/${res.data.login}`);
+          setUser(res.data.user);
+          history.push(`/appointments/${user.login}`);
           setAuthReg({
             text: "Приемы",
             flag: true,
           });
           setValues({
             login: "",
-            amount: "",
             password: "",
-            weight: "",
-            weightRange: "",
             showPassword: false,
             showPasswordRepeat: false,
             passwordRepeat: "",
@@ -97,13 +107,21 @@ const Reg = ({ setAuthReg }) => {
         })
         .catch((err) => {
           if (err.response.status === 421) {
-            alert("Пользователь с таким логином уже зарегистрирован");
+            setState({
+              open: true,
+              text: "Пользователь с таким логином уже зарегистрирован",
+              vertical: "top",
+              horizontal: "center",
+            });
           }
         });
     } else {
-      alert(
-        "Вводимые значения некорректны, длина строк должна быть не меньше 6, в пароле должны присутствовать цифры и латинские символы"
-      );
+      setState({
+        open: true,
+        text: "Вводимые значения некорректны, длина строк должна быть не меньше 6, в пароле должны присутствовать цифры и латинские символы",
+        vertical: "top",
+        horizontal: "center",
+      });
     }
   };
 
@@ -185,6 +203,26 @@ const Reg = ({ setAuthReg }) => {
           Авторизоваться
         </div>
       </form>
+      <Snackbar
+        open={state.open}
+        autoHideDuration={13000}
+        onClose={handleClose}
+        message={state.text}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        enqueueSnackbar="error"
+        action={
+          <React.Fragment>
+            <CloseIcon color="secondary" onClick={handleClose} />
+          </React.Fragment>
+        }
+      >
+        <Alert onClose={handleClose} severity="error">
+          {state.text}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

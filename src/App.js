@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import icon from "./images/icon.png";
-import Auth from "./Auth";
-import Reg from "./Reg";
-import Appointments from "./appointments";
-import "./App.scss";
-import medical from "./images/medical-2.png";
-import { Route, Switch, useHistory, Redirect } from "react-router-dom";
+import { Route, Switch, useHistory, Redirect, Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
+import Auth from "./Auth/Auth";
+import Reg from "./Reg/Reg";
+import Appointments from "./Appointments/Appointments";
+import icon from "./source/images/icon.png";
+import medical from "./source/images/medical-2.png";
+import "./App.scss";
 
 function App() {
   const history = useHistory();
@@ -21,10 +21,22 @@ function App() {
         <h1>{authReg.text}</h1>
         {authReg.flag ? (
           <div>
-            {/* <h4>{history.pop()}</h4> */}
-            <Button variant="outlined" color="primary" type="none">
-              Выйти
-            </Button>
+            {/* <h4>{window.location.pathname+""}</h4> */}
+            <Link to="/authorization">
+              <Button
+                variant="outlined"
+                color="primary"
+                type="none"
+                onClick={() => {
+                  setAuthReg({
+                    text: "Вход в систему",
+                    flag: false,
+                  });
+                }}
+              >
+                Выйти
+              </Button>
+            </Link>
           </div>
         ) : (
           <div />
