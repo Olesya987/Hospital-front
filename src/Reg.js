@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import { Route, Switch, useHistory, Redirect } from "react-router-dom";
 import axios from "axios";
-import clsx from "clsx";
-import {
-  alpha,
-  ThemeProvider,
-  withStyles,
-  makeStyles,
-  createTheme,
-} from "@material-ui/core/styles";
+import "./Reg.scss";
 import IconButton from "@material-ui/core/IconButton";
 import Input from "@material-ui/core/Input";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
@@ -25,23 +18,7 @@ const Reg = ({ setAuthReg }) => {
 
   const [user, setUser] = useState({});
   const [passCorrect, setPass] = useState(false);
-  const useStyles = makeStyles((theme) => ({
-    root: {
-      display: "flex",
-      flexWrap: "wrap",
-    },
-    margin: {
-      margin: theme.spacing(1),
-    },
-    withoutLabel: {
-      marginTop: theme.spacing(1),
-    },
-    textField: {
-      width: "auto",
-    },
-  }));
 
-  const classes = useStyles();
   const [values, setValues] = React.useState({
     login: "",
     amount: "",
@@ -68,12 +45,18 @@ const Reg = ({ setAuthReg }) => {
     let flag1 = true;
     let flag3 = false;
     const regexp = /((?=.*[0-9])(?=.*[a-zA-Z]).{6,})/g;
-    if (regexp.test(values.password)) {
-      flag3 = true;
-    }
+    if (regexp.test(values.password)) flag3 = true;
     if (/[а-яА-Я]/.test(values.password)) flag1 = false;
 
     return flag1 && flag3;
+  };
+
+  const goToAuth = () => {
+    setAuthReg({
+      text: "Вход в систему",
+    });
+
+    history.push("/authorization");
   };
 
   const subUser = async (e) => {
@@ -92,24 +75,31 @@ const Reg = ({ setAuthReg }) => {
           password: formData.get("input-password"),
         })
         .then((res) => {
-          history.push(`/appointments/${res.data.login}`)
-          setUser(res.data);
+          setUser({
+            login: res.data.login,
+            token: res.data.token,
+          });
+          history.push(`/appointments/${res.data.login}`);
           setAuthReg({
             text: "Приемы",
-            flag:true,
+            flag: true,
           });
+          setValues({
+            login: "",
+            amount: "",
+            password: "",
+            weight: "",
+            weightRange: "",
+            showPassword: false,
+            showPasswordRepeat: false,
+            passwordRepeat: "",
+          });
+        })
+        .catch((err) => {
+          if (err.response.status === 421) {
+            alert("Пользователь с таким логином уже зарегистрирован");
+          }
         });
-      // e.target.reset();
-      setValues({
-        login: "",
-        amount: "",
-        password: "",
-        weight: "",
-        weightRange: "",
-        showPassword: false,
-        showPasswordRepeat: false,
-        passwordRepeat: "",
-      });
     } else {
       alert(
         "Вводимые значения некорректны, длина строк должна быть не меньше 6, в пароле должны присутствовать цифры и латинские символы"
@@ -122,33 +112,19 @@ const Reg = ({ setAuthReg }) => {
       <h2>Регистрация</h2>
       <form onSubmit={subUser}>
         <div className="input-form-reg">
-          {/* <label>Login:</label>
-          <input type="text" id="input-login" name="input-login" />
-          <label>Password:</label>
-          <input type="text" id="input-password" name="input-password" />
-          <label>Repeat password:</label>
-          <input
-            type="text"
-            id="input-password-repeat"
-            name="input-password-repeat"
-          /> */}
-          <div style={{ margin: "8px" }}>
+          <div className="reg-div-login">
             <TextField
               id="input-login"
               name="input-login"
               label="Login"
               type="text"
               variant="outlined"
-              style={{ width: "100%" }}
               value={values.login}
               onChange={handleChange("login")}
             />
           </div>
 
-          <FormControl
-            className={clsx(classes.margin, classes.textField)}
-            variant="outlined"
-          >
+          <FormControl className="root margin textField" variant="outlined">
             <InputLabel htmlFor="outlined-adornment-password">
               Password
             </InputLabel>
@@ -163,7 +139,6 @@ const Reg = ({ setAuthReg }) => {
                   <IconButton
                     aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
-                    // onMouseDown={handleMouseDownPassword}
                     edge="end"
                   >
                     {values.showPassword ? <Visibility /> : <VisibilityOff />}
@@ -174,10 +149,7 @@ const Reg = ({ setAuthReg }) => {
             />
           </FormControl>
 
-          <FormControl
-            className={clsx(classes.margin, classes.textField)}
-            variant="outlined"
-          >
+          <FormControl className="margin textField" variant="outlined">
             <InputLabel htmlFor="outlined-adornment-password-repeat">
               Repeat password
             </InputLabel>
@@ -192,7 +164,6 @@ const Reg = ({ setAuthReg }) => {
                   <IconButton
                     aria-label="toggle password repeat visibility"
                     onClick={handleClickShowPasswordRepeat}
-                    // onMouseDown={handleMouseDownPasswordRepeat}
                     edge="end"
                   >
                     {values.showPasswordRepeat ? (
@@ -210,17 +181,7 @@ const Reg = ({ setAuthReg }) => {
         <Button variant="outlined" color="primary" type="none">
           Зарегистрироваться
         </Button>
-        {/* <button>Зарегистрироваться</button> */}
-        <div
-          className="reg-text"
-          onClick={() => {
-            setAuthReg({
-              text: "Вход в систему",
-            });
-            
-            history.push("/authorization");
-          }}
-        >
+        <div className="reg-text" onClick={() => goToAuth()}>
           Авторизоваться
         </div>
       </form>

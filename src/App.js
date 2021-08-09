@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import logo from "./logo.svg";
-import cross from "./cross.png";
-import icon from "./icon.png";
+import icon from "./images/icon.png";
 import Auth from "./Auth";
 import Reg from "./Reg";
 import Appointments from "./appointments";
-import "./App.css";
-import medical from "./medical-2.png";
+import "./App.scss";
+import medical from "./images/medical-2.png";
 import { Route, Switch, useHistory, Redirect } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 
@@ -34,11 +32,6 @@ function App() {
       </header>
       <div className="main-reg">
         <img className="img-start" src={medical}></img>
-        {/* {authReg.flag ? (
-          <Auth setAuthReg={setAuthReg} />
-        ) : (
-          <Reg setAuthReg={setAuthReg} />
-        )} */}
 
         <Switch>
           <Route path="/authorization">

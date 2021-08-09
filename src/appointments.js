@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Route, Switch, useHistory, Redirect } from "react-router-dom";
+
 const Appointments = ({ setAuthReg }) => {
   const history = useHistory();
   return (
