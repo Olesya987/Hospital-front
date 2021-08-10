@@ -19,6 +19,8 @@ const Auth = ({ setAuthReg }) => {
         onClick={() => {
           setAuthReg({
             text: "Зарегистрироваться в системе",
+            login: "",
+            token: "",
           });
           history.push("/registration");
         }}

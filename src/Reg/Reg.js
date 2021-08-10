@@ -12,13 +12,13 @@ import {
   Snackbar,
 } from "@material-ui/core";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
-import MuiAlert from '@material-ui/lab/Alert';
+import MuiAlert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
 import "./Reg.scss";
 
-function Alert(props) {
+const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+};
 
 const Reg = ({ setAuthReg }) => {
   const history = useHistory();
@@ -28,8 +28,6 @@ const Reg = ({ setAuthReg }) => {
   const [state, setState] = useState({
     open: false,
     text: "",
-    vertical: "top",
-    horizontal: "center",
   });
   const [values, setValues] = useState({
     login: "",
@@ -52,7 +50,7 @@ const Reg = ({ setAuthReg }) => {
   };
   const checkPass = () => {
     const regexp = /((?=.*[0-9])(?=.*[a-zA-Z]).{6,})/g;
-    return regexp.test(values.password) && /[а-яА-Я]/.test(values.password);
+    return regexp.test(values.password) && !/[а-яА-Я]/.test(values.password);
   };
 
   const handleClose = (event, reason) => {
@@ -63,26 +61,24 @@ const Reg = ({ setAuthReg }) => {
     setState({
       open: false,
       text: "",
-      vertical: "top",
-      horizontal: "center",
     });
   };
 
   const goToAuth = () => {
     setAuthReg({
       text: "Вход в систему",
+      login: "",
+      token: "",
     });
     history.push("/authorization");
   };
 
   const subUser = async (e) => {
     e.preventDefault();
-    console.log(checkPass());
     const formData = new FormData(e.target);
     if (
       formData.get("input-login").length >= 6 &&
       checkPass() &&
-      values.password.length >= 6 &&
       values.password === values.passwordRepeat
     ) {
       await axios
@@ -91,11 +87,12 @@ const Reg = ({ setAuthReg }) => {
           password: formData.get("input-password"),
         })
         .then((res) => {
-          setUser(res.data.user);
-          history.push(`/appointments/${user.login}`);
+          history.push(`/appointments`);
           setAuthReg({
             text: "Приемы",
             flag: true,
+            login: res.data.login,
+            token: res.data.token,
           });
           setValues({
             login: "",
@@ -110,8 +107,6 @@ const Reg = ({ setAuthReg }) => {
             setState({
               open: true,
               text: "Пользователь с таким логином уже зарегистрирован",
-              vertical: "top",
-              horizontal: "center",
             });
           }
         });
@@ -119,8 +114,6 @@ const Reg = ({ setAuthReg }) => {
       setState({
         open: true,
         text: "Вводимые значения некорректны, длина строк должна быть не меньше 6, в пароле должны присутствовать цифры и латинские символы",
-        vertical: "top",
-        horizontal: "center",
       });
     }
   };
@@ -207,7 +200,7 @@ const Reg = ({ setAuthReg }) => {
         open={state.open}
         autoHideDuration={13000}
         onClose={handleClose}
-        message={state.text}
+        // message={state.text}
         anchorOrigin={{
           vertical: "top",
           horizontal: "center",

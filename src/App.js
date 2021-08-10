@@ -13,15 +13,18 @@ function App() {
   const [authReg, setAuthReg] = useState({
     text: "Вход в систему",
     flag: false,
+    login: "",
+    token: "",
   });
+
   return (
     <div className="App">
       <header className="App-header">
         <img className="App-logo" src={icon}></img>
         <h1>{authReg.text}</h1>
-        {authReg.flag ? (
+        {authReg.flag && (
           <div>
-            {/* <h4>{window.location.pathname+""}</h4> */}
+            <h4>{authReg.login}</h4>
             <Link to="/authorization">
               <Button
                 variant="outlined"
@@ -31,6 +34,8 @@ function App() {
                   setAuthReg({
                     text: "Вход в систему",
                     flag: false,
+                    login: "",
+                    token: "",
                   });
                 }}
               >
@@ -38,8 +43,6 @@ function App() {
               </Button>
             </Link>
           </div>
-        ) : (
-          <div />
         )}
       </header>
       <div className="main-reg">
@@ -52,7 +55,7 @@ function App() {
           <Route path="/registration">
             <Reg setAuthReg={setAuthReg} />
           </Route>
-          <Route path="/appointments/:login">
+          <Route path="/appointments">
             <Appointments setAuthReg={setAuthReg} />
           </Route>
           <Redirect from="/" to="/authorization" />
