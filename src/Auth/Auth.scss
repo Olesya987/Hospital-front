@@ -1,0 +1,70 @@
+.root {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.margin {
+  margin: 8px !important;
+}
+
+.textField {
+  width: auto;
+}
+
+.auth-div-login {
+  margin: 8px;
+
+  div {
+    width: 100%;
+  }
+}
+
+.main-auth {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 85vh;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.main-auth-fild {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #ffffff;
+  height: fit-content;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 7px 7px 19px 0px #4b5e75;
+
+  h2 {
+    margin: 20px;
+  }
+}
+
+.input-form-auth {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.MuiButton-outlinedPrimary {
+  margin: 8px !important;
+}
+
+.auth-text {
+  margin: 8px;
+}
+
+.auth-form {
+  width: 40%;
+}
