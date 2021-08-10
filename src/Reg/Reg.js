@@ -19,8 +19,6 @@ import "./Reg.scss";
 const Reg = ({ setAuthReg }) => {
   const history = useHistory();
 
-  const [user, setUser] = useState({});
-
   const [state, setState] = useState({
     open: false,
     text: "",
@@ -53,7 +51,6 @@ const Reg = ({ setAuthReg }) => {
     if (reason === "clickaway") {
       return;
     }
-
     setState({
       open: false,
       text: "",
@@ -88,8 +85,8 @@ const Reg = ({ setAuthReg }) => {
           setAuthReg({
             text: "Приемы",
             flag: true,
-            login: login,
-            token: token,
+            login,
+            token,
           });
           setValues({
             login: "",
@@ -186,6 +183,7 @@ const Reg = ({ setAuthReg }) => {
             />
           </FormControl>
         </div>
+
         <Button variant="outlined" color="primary" type="none">
           Зарегистрироваться
         </Button>
@@ -193,6 +191,7 @@ const Reg = ({ setAuthReg }) => {
           Авторизоваться
         </div>
       </form>
+
       <Snackbar
         open={state.open}
         autoHideDuration={13000}
