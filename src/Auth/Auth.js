@@ -3,6 +3,9 @@ import { Route, Switch, useHistory, Redirect } from "react-router-dom";
 
 const Auth = ({ setAuthReg }) => {
   const history = useHistory();
+
+
+  
   return (
     <div>
       <h2>Войти в систему</h2>

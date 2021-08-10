@@ -16,10 +16,6 @@ import MuiAlert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
 import "./Reg.scss";
 
-const Alert = (props) => {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-};
-
 const Reg = ({ setAuthReg }) => {
   const history = useHistory();
 
@@ -87,12 +83,13 @@ const Reg = ({ setAuthReg }) => {
           password: formData.get("input-password"),
         })
         .then((res) => {
+          const { login, token } = res.data;
           history.push(`/appointments`);
           setAuthReg({
             text: "Приемы",
             flag: true,
-            login: res.data.login,
-            token: res.data.token,
+            login: login,
+            token: token,
           });
           setValues({
             login: "",
@@ -200,7 +197,6 @@ const Reg = ({ setAuthReg }) => {
         open={state.open}
         autoHideDuration={13000}
         onClose={handleClose}
-        // message={state.text}
         anchorOrigin={{
           vertical: "top",
           horizontal: "center",
@@ -212,9 +208,14 @@ const Reg = ({ setAuthReg }) => {
           </React.Fragment>
         }
       >
-        <Alert onClose={handleClose} severity="error">
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={handleClose}
+          severity="error"
+        >
           {state.text}
-        </Alert>
+        </MuiAlert>
       </Snackbar>
     </div>
   );
