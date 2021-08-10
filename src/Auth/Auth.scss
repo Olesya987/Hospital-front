@@ -11,15 +11,15 @@
   width: auto;
 }
 
-.reg-div-login {
+.auth-div-login {
   margin: 8px;
 
-  div{
+  div {
     width: 100%;
   }
 }
 
-.main-reg {
+.main-auth {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -35,7 +35,7 @@ form {
   width: 100%;
 }
 
-.main-reg-field {
+.main-auth-field {
   width: 30%;
   display: flex;
   flex-direction: column;
@@ -51,7 +51,7 @@ form {
   }
 }
 
-.input-form-reg {
+.input-form-auth {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -61,10 +61,10 @@ form {
   margin: 8px !important;
 }
 
-.reg-text {
+.auth-text {
   margin: 8px;
 }
 
-.reg-form {
+.auth-form {
   width: 40%;
 }

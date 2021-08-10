@@ -14,6 +14,7 @@ import {
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import MuiAlert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
+import "./Auth.scss";
 
 const Auth = ({ setAuthReg }) => {
   const history = useHistory();
@@ -22,12 +23,11 @@ const Auth = ({ setAuthReg }) => {
     open: false,
     text: "",
   });
+
   const [values, setValues] = useState({
     login: "",
     password: "",
     showPassword: false,
-    showPasswordRepeat: false,
-    passwordRepeat: "",
   });
 
   const handleChange = (prop) => (event) => {
@@ -36,10 +36,6 @@ const Auth = ({ setAuthReg }) => {
 
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword });
-  };
-
-  const handleClickShowPasswordRepeat = () => {
-    setValues({ ...values, showPasswordRepeat: !values.showPasswordRepeat });
   };
 
   const handleClose = (event, reason) => {
@@ -62,19 +58,130 @@ const Auth = ({ setAuthReg }) => {
     history.push("/registration");
   };
 
+  const checkUser = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    if (
+      formData.get("input-login").length !== 0 &&
+      formData.get("input-password").length !== 0
+    ) {
+      const { login, password } = values;
+      await axios
+        .post("http://localhost:8080/user/get", {
+          login,
+          password,
+        })
+        .then((res) => {
+          const { login, token } = res.data;
+          history.push(`/appointments`);
+          setAuthReg({
+            text: "Приемы",
+            flag: true,
+            login,
+            token,
+          });
+          setValues({
+            login: "",
+            password: "",
+            showPassword: false,
+            showPasswordRepeat: false,
+            passwordRepeat: "",
+          });
+        })
+        .catch((err) => {
+          setState({
+            open: true,
+            text:
+              err.response.status === 450
+                ? "Пользователя с таким логином не существует"
+                : err.response.status === 440
+                ? "Введен неверный пароль"
+                : "",
+          });
+        });
+    } else {
+      setState({
+        open: true,
+        text: "Вводимые значения некорректны, должны быть заполнены все поля",
+      });
+    }
+  };
+
   return (
-    <div>
+    <div className="main-auth-field">
       <h2>Войти в систему</h2>
-      <form>
-        <div>
-          <label>Login:</label>
-          <input type="text" id="input-login" name="input-login" />
-          <label>Password:</label>
-          <input type="text" id="input-password" name="input-password" />
+      <form onSubmit={checkUser}>
+        <div className="input-form-auth">
+          <div className="auth-div-login">
+            <TextField
+              id="input-login"
+              name="input-login"
+              label="Login"
+              type="text"
+              variant="outlined"
+              value={values.login}
+              onChange={handleChange("login")}
+            />
+          </div>
+
+          <FormControl className="root margin textField" variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password">
+              Password
+            </InputLabel>
+            <OutlinedInput
+              id="input-password"
+              name="input-password"
+              type={values.showPassword ? "text" : "password"}
+              value={values.password}
+              onChange={handleChange("password")}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              labelWidth={70}
+            />
+          </FormControl>
         </div>
-        <button>Войти</button>
+
+        <Button variant="outlined" color="primary" type="none">
+          Войти
+        </Button>
+        <div className="auth-text" onClick={() => goToReg()}>
+          Зарегистрироваться
+        </div>
       </form>
-      <a onClick={() => goToReg()}>Зарегистрироваться</a>
+
+      <Snackbar
+        open={state.open}
+        autoHideDuration={13000}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        enqueueSnackbar="error"
+        action={
+          <React.Fragment>
+            <CloseIcon color="secondary" onClick={handleClose} />
+          </React.Fragment>
+        }
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={handleClose}
+          severity="error"
+        >
+          {state.text}
+        </MuiAlert>
+      </Snackbar>
     </div>
   );
 };

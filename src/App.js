@@ -20,8 +20,11 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img className="App-logo" src={icon}></img>
-        <h1>{authReg.text}</h1>
+        <div>
+          <img className="App-logo" src={icon}></img>
+          <h1>{authReg.text}</h1>
+        </div>
+
         {authReg.flag && (
           <div>
             <h4>{authReg.login}</h4>
@@ -46,7 +49,7 @@ function App() {
         )}
       </header>
       <div className="main-reg">
-        <img className="img-start" src={medical}></img>
+        {!authReg.flag && <img className="img-start" src={medical} />}
 
         <Switch>
           <Route path="/authorization">
