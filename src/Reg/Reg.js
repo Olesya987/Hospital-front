@@ -113,7 +113,7 @@ const Reg = ({ setAuthReg }) => {
   };
 
   return (
-    <div className="main-reg-fild">
+    <div className="main-reg-field">
       <h2>Регистрация</h2>
       <form onSubmit={subUser}>
         <div className="input-form-reg">
