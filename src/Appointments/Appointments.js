@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Route, Switch, useHistory, Redirect } from "react-router-dom";
-
+import Sort from "../Sort/Sort";
+import "./Appointments.scss";
 const Appointments = ({ setAuthReg }) => {
   const history = useHistory();
   return (
-    <div>
-      
+    <div className="appoint-main">
+      <Sort />
       {/* <form>
         <div>
           <label>Login:</label>

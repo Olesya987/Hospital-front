@@ -62,14 +62,14 @@ const Auth = ({ setAuthReg }) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     if (
-      formData.get("input-login").length != 0 &&
-      formData.get("input-password").length != 0
+      formData.get("input-login").length !== 0 &&
+      formData.get("input-password").length !== 0
     ) {
-      console.log(values.login);
+      const { login, password } = values;
       await axios
         .post("http://localhost:8080/user/get", {
-          login: values.login,
-          password: values.password,
+          login,
+          password,
         })
         .then((res) => {
           const { login, token } = res.data;
@@ -89,19 +89,15 @@ const Auth = ({ setAuthReg }) => {
           });
         })
         .catch((err) => {
-          if (err.response.status === 450) {
-            console.log(values.login);
-            setState({
-              open: true,
-              text: "Пользователя с таким логином не существует",
-            });
-          }
-          if (err.response.status === 440) {
-            setState({
-              open: true,
-              text: "Введен неверный пароль",
-            });
-          }
+          setState({
+            open: true,
+            text:
+              err.response.status === 450
+                ? "Пользователя с таким логином не существует"
+                : err.response.status === 440
+                ? "Введен неверный пароль"
+                : "",
+          });
         });
     } else {
       setState({
@@ -112,7 +108,7 @@ const Auth = ({ setAuthReg }) => {
   };
 
   return (
-    <div className="main-auth-fild">
+    <div className="main-auth-field">
       <h2>Войти в систему</h2>
       <form onSubmit={checkUser}>
         <div className="input-form-auth">
