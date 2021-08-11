@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Switch, useHistory, Redirect } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import axios from "axios";
 import {
   IconButton,
@@ -50,11 +50,17 @@ const Auth = ({ setAuthReg }) => {
   };
 
   const goToReg = () => {
-    setAuthReg({
-      text: "Зарегистрироваться в системе",
-      login: "",
-      token: "",
-    });
+    localStorage.setItem(
+      "info",
+      JSON.stringify({
+        text: "Зарегистрироваться в системе",
+        login: "",
+        token: "",
+        flag: false,
+      })
+    );
+    setAuthReg(JSON.parse(localStorage.getItem("info")));
+
     history.push("/registration");
   };
 
@@ -73,13 +79,16 @@ const Auth = ({ setAuthReg }) => {
         })
         .then((res) => {
           const { login, token } = res.data;
-          history.push(`/appointments`);
-          setAuthReg({
-            text: "Приемы",
-            flag: true,
-            login,
-            token,
-          });
+          localStorage.setItem(
+            "info",
+            JSON.stringify({
+              text: "Приемы",
+              flag: true,
+              login,
+              token,
+            })
+          );
+          setAuthReg(JSON.parse(localStorage.getItem("info")));
           setValues({
             login: "",
             password: "",
@@ -87,6 +96,7 @@ const Auth = ({ setAuthReg }) => {
             showPasswordRepeat: false,
             passwordRepeat: "",
           });
+          history.push(`/appointments`);
         })
         .catch((err) => {
           setState({

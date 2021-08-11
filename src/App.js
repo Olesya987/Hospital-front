@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Switch, useHistory, Redirect, Link } from "react-router-dom";
+import { Route, Switch, Redirect, Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import Auth from "./Auth/Auth";
 import Reg from "./Reg/Reg";
@@ -9,24 +9,26 @@ import medical from "./source/images/medical-2.png";
 import "./App.scss";
 
 function App() {
-  const history = useHistory();
-  const [authReg, setAuthReg] = useState({
-    text: "Вход в систему",
-    flag: false,
-    login: "",
-    token: "",
-  });
+  const [authReg, setAuthReg] = useState(
+    JSON.parse(localStorage.getItem("info")) || {
+      text: "Вход в систему",
+      flag: false,
+      login: "",
+      token: "",
+    }
+  );
 
   return (
     <div className="App">
       <header className="App-header">
         <div>
-          <img className="App-logo" src={icon}></img>
+          <img className="App-logo" src={icon} alt='logo'></img>
           <h1>{authReg.text}</h1>
         </div>
 
         {authReg.flag && (
           <div>
+            
             <h4>{authReg.login}</h4>
             <Link to="/authorization">
               <Button
@@ -34,12 +36,16 @@ function App() {
                 color="primary"
                 type="none"
                 onClick={() => {
-                  setAuthReg({
-                    text: "Вход в систему",
-                    flag: false,
-                    login: "",
-                    token: "",
-                  });
+                  localStorage.setItem(
+                    "info",
+                    JSON.stringify({
+                      text: "Вход в систему",
+                      flag: false,
+                      login: "",
+                      token: "",
+                    })
+                  );
+                  setAuthReg(JSON.parse(localStorage.getItem("info")));
                 }}
               >
                 Выйти
@@ -49,7 +55,7 @@ function App() {
         )}
       </header>
       <div className="main-reg">
-        {!authReg.flag && <img className="img-start" src={medical} />}
+        {!authReg.flag && <img className="img-start" src={medical} alt='design' />}
 
         <Switch>
           <Route path="/authorization">
@@ -59,7 +65,7 @@ function App() {
             <Reg setAuthReg={setAuthReg} />
           </Route>
           <Route path="/appointments">
-            <Appointments setAuthReg={setAuthReg} />
+            <Appointments />
           </Route>
           <Redirect from="/" to="/authorization" />
         </Switch>
