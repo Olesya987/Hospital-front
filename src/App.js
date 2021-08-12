@@ -8,19 +8,12 @@ import icon from "./source/images/icon.png";
 import "./App.scss";
 
 function App() {
-  const [authReg, setAuthReg] = useState(
-    JSON.parse(localStorage.getItem("info")) || {
-      text: "Вход в систему",
-      login: "",
-      token: "",
-    }
-  );
+  const [authReg, setAuthReg] = useState({});
 
   const goToAuth = () => {
     const info = {
       text: "Вход в систему",
       login: "",
-      token: "",
     };
     localStorage.setItem("info", JSON.stringify(info));
     setAuthReg(info);
@@ -34,7 +27,7 @@ function App() {
           <h1>{authReg.text}</h1>
         </div>
 
-        {authReg.login.length !== 0 && (
+        {authReg.login && (
           <div>
             <h4>{authReg.login}</h4>
             <Link to="/authorization">
@@ -59,7 +52,7 @@ function App() {
           <Reg setAuthReg={setAuthReg} />
         </Route>
         <Route path="/appointments">
-          <Appointments />
+          <Appointments setAuthReg={setAuthReg} />
         </Route>
         <Redirect from="/" to="/authorization" />
       </Switch>

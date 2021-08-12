@@ -33,7 +33,7 @@ const Add = ({ setData, setFlag }) => {
   };
 
   const addAppointment = () => {
-    const info = JSON.parse(localStorage.getItem("info"));
+    const token = localStorage.getItem("token");
     const { name, docName, date, complaints } = require;
     axios
       .post(
@@ -45,7 +45,7 @@ const Add = ({ setData, setFlag }) => {
           complaints,
         },
         {
-          headers: { authorization: info.token },
+          headers: { authorization: token },
         }
       )
       .then((res) => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import {
@@ -31,14 +31,6 @@ const Auth = ({ setAuthReg }) => {
     showPassword: false,
   });
 
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
-
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
-  };
-
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -50,14 +42,12 @@ const Auth = ({ setAuthReg }) => {
     });
   };
 
+  useEffect(() => {
+    setAuthReg({ text: "Вход в систему", login: "" });
+  }, []);
+
   const goToReg = () => {
-    const info = {
-      text: "Зарегистрироваться в системе",
-      login: "",
-      token: "",
-    };
-    localStorage.setItem("info", JSON.stringify(info));
-    setAuthReg(info);
+    setAuthReg({ text: "Зарегистрироваться в системе", login: "" });
 
     history.push("/registration");
   };
@@ -77,13 +67,9 @@ const Auth = ({ setAuthReg }) => {
         })
         .then((res) => {
           const { login, token } = res.data;
-          const info = {
-            text: "Приемы",
-            login,
-            token,
-          };
-          localStorage.setItem("info", JSON.stringify(info));
-          setAuthReg(info);
+          localStorage.setItem("token", token);
+          localStorage.setItem("login", login);
+          setAuthReg({ text: "Приемы", login });
           setValues({
             login: "",
             password: "",
@@ -127,7 +113,9 @@ const Auth = ({ setAuthReg }) => {
                 type="text"
                 variant="outlined"
                 value={values.login}
-                onChange={() => handleChange("login")}
+                onChange={(e) =>
+                  setValues({ ...values, login: e.target.value })
+                }
               />
             </div>
 
@@ -140,12 +128,19 @@ const Auth = ({ setAuthReg }) => {
                 name="input-password"
                 type={values.showPassword ? "text" : "password"}
                 value={values.password}
-                onChange={() => handleChange("password")}
+                onChange={(e) =>
+                  setValues({ ...values, password: e.target.value })
+                }
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      onClick={() => handleClickShowPassword}
+                      onClick={() =>
+                        setValues({
+                          ...values,
+                          showPassword: !values.showPassword,
+                        })
+                      }
                       edge="end"
                     >
                       {values.showPassword ? <Visibility /> : <VisibilityOff />}

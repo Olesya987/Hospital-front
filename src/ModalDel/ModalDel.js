@@ -17,10 +17,10 @@ const ModalDel = ({ open, id, setData, setFlag }) => {
   };
 
   const delFunc = () => {
-    const info = JSON.parse(localStorage.getItem("info"));
+    const token = localStorage.getItem("token");
     axios
       .delete(`http://localhost:8080/appointment/del?id=${id}`, {
-        headers: { authorization: info.token },
+        headers: { authorization: token },
       })
       .then((res) => {
         setData(res.data.appointments);
@@ -37,7 +37,7 @@ const ModalDel = ({ open, id, setData, setFlag }) => {
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">{"Удалить прием"}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">Удалить прием</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
           Вы действительно хотите удалить прием?

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import {
@@ -32,17 +32,10 @@ const Reg = ({ setAuthReg }) => {
     passwordRepeat: "",
   });
 
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
+  useEffect(() => {
+    setAuthReg({ text: "Зарегистрироваться в системе", login: "" });
+  }, []);
 
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
-  };
-
-  const handleClickShowPasswordRepeat = () => {
-    setValues({ ...values, showPasswordRepeat: !values.showPasswordRepeat });
-  };
   const checkPass = () => {
     const regexp = /((?=.*[0-9])(?=.*[a-zA-Z]).{6,})/g;
     return regexp.test(values.password) && !/[а-яА-Я]/.test(values.password);
@@ -59,13 +52,7 @@ const Reg = ({ setAuthReg }) => {
   };
 
   const goToAuth = () => {
-    const info = {
-      text: "Вход в систему",
-      login: "",
-      token: "",
-    };
-    localStorage.setItem("info", JSON.stringify(info));
-    setAuthReg(info);
+    setAuthReg({ text: "Вход в систему", login: "" });
     history.push("/authorization");
   };
 
@@ -84,13 +71,9 @@ const Reg = ({ setAuthReg }) => {
         })
         .then((res) => {
           const { login, token } = res.data;
-          const info = {
-            text: "Приемы",
-            login,
-            token,
-          };
-          localStorage.setItem("info", JSON.stringify(info));
-          setAuthReg(info);
+          localStorage.setItem("token", token);
+          localStorage.setItem("login", login);
+          setAuthReg({ text: "Приемы", login });
           setValues({
             login: "",
             password: "",
@@ -121,7 +104,7 @@ const Reg = ({ setAuthReg }) => {
       <img className="img-start" src={medical} alt="design" />
       <div className="main-reg-field">
         <h2>Регистрация</h2>
-        <form onSubmit={() => subUser()}>
+        <form onSubmit={(e) => subUser(e)}>
           <div className="input-form-reg">
             <div className="reg-div-login">
               <TextField
@@ -131,7 +114,9 @@ const Reg = ({ setAuthReg }) => {
                 type="text"
                 variant="outlined"
                 value={values.login}
-                onChange={() => handleChange("login")}
+                onChange={(e) =>
+                  setValues({ ...values, login: e.target.value })
+                }
               />
             </div>
 
@@ -144,12 +129,19 @@ const Reg = ({ setAuthReg }) => {
                 name="input-password"
                 type={values.showPassword ? "text" : "password"}
                 value={values.password}
-                onChange={() => handleChange("password")}
+                onChange={(e) =>
+                  setValues({ ...values, password: e.target.value })
+                }
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      onClick={() => handleClickShowPassword()}
+                      onClick={() =>
+                        setValues({
+                          ...values,
+                          showPassword: !values.showPassword,
+                        })
+                      }
                       edge="end"
                     >
                       {values.showPassword ? <Visibility /> : <VisibilityOff />}
@@ -169,15 +161,26 @@ const Reg = ({ setAuthReg }) => {
                 name="input-password-repeat"
                 type={values.showPasswordRepeat ? "text" : "password"}
                 value={values.passwordRepeat}
-                onChange={() => handleChange("passwordRepeat")}
+                onChange={(e) =>
+                  setValues({ ...values, passwordRepeat: e.target.value })
+                }
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password repeat visibility"
-                      onClick={() => handleClickShowPasswordRepeat()}
+                      onClick={() =>
+                        setValues({
+                          ...values,
+                          showPasswordRepeat: !values.showPasswordRepeat,
+                        })
+                      }
                       edge="end"
                     >
-                      {values.showPasswordRepeat ? <Visibility /> : <VisibilityOff />}
+                      {values.showPasswordRepeat ? (
+                        <Visibility />
+                      ) : (
+                        <VisibilityOff />
+                      )}
                     </IconButton>
                   </InputAdornment>
                 }

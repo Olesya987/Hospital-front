@@ -25,10 +25,10 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
 
   useEffect(() => {
     if (flag) {
-      const info = JSON.parse(localStorage.getItem("info"));
+      const token = localStorage.getItem("token");
       axios
         .get("http://localhost:8080/appointment/get", {
-          headers: { authorization: info.token },
+          headers: { authorization: token },
         })
         .then((res) => {
           const temp = res.data.appointments;
