@@ -10,10 +10,14 @@ import {
 } from "@material-ui/core";
 import "./ModalDel.scss";
 
-const ModalDel = ({ open, id, setData, setFlag }) => {
+const ModalDel = ({ open, id, setData, setFlag, setDelProps }) => {
   const handleCloseDel = () => {
-    open = false;
-    id = "";
+    setDelProps({
+      open: false,
+      id: "",
+      setData,
+      setFlag,
+    });
   };
 
   const delFunc = () => {
@@ -26,8 +30,12 @@ const ModalDel = ({ open, id, setData, setFlag }) => {
         setData(res.data.appointments);
         setFlag(true);
       });
-    open = false;
-    id = "";
+    setDelProps({
+      open: false,
+      id: "",
+      setData,
+      setFlag,
+    });
   };
 
   return (

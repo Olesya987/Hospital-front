@@ -19,10 +19,6 @@ const Add = ({ setData, setFlag }) => {
     complaints: "",
   });
 
-  const handleChange = (prop) => (e) => {
-    setRequire({ ...require, [prop]: e.target.value });
-  };
-
   const checkFields = () => {
     return (
       require.name.length !== 0 &&
@@ -79,7 +75,7 @@ const Add = ({ setData, setFlag }) => {
                   type="text"
                   variant="outlined"
                   value={require.name}
-                  onChange={() => handleChange("name")}
+                  onChange={(e) => setRequire({ ...require, name: e.target.value })}
                 />
               </div>
             </Grid>
@@ -94,7 +90,7 @@ const Add = ({ setData, setFlag }) => {
                     id="input-docName"
                     name="input-docName"
                     value={require.docName}
-                    onChange={() => handleChange("docName")}
+                    onChange={(e) => setRequire({ ...require, docName: e.target.value })}
                     label="Врач"
                   >
                     <MenuItem value="">
@@ -124,7 +120,7 @@ const Add = ({ setData, setFlag }) => {
                     shrink: true,
                   }}
                   value={require.date}
-                  onChange={() => handleChange("date")}
+                  onChange={(e) => setRequire({ ...require, date: e.target.value })}
                 />
               </div>
             </Grid>
@@ -137,7 +133,7 @@ const Add = ({ setData, setFlag }) => {
                   type="text"
                   variant="outlined"
                   value={require.complaints}
-                  onChange={() => handleChange("complaints")}
+                  onChange={(e) => setRequire({ ...require, complaints: e.target.value })}
                 />
               </div>
             </Grid>

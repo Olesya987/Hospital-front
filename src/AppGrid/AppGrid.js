@@ -18,9 +18,17 @@ import "./AppGrid.scss";
 
 const AppGrid = ({ setData, data, setFlag, flag }) => {
   const [characters, setCharacters] = useState([]);
-  const [editProps, setEditProps] = React.useState({
+  const [delProps, setDelProps] = useState({
     open: false,
     id: "",
+    setData,
+    setFlag,
+  });
+  const [editProps, setEditProps] = useState({
+    open: false,
+    changeRow: {},
+    setData,
+    setFlag,
   });
 
   useEffect(() => {
@@ -64,21 +72,6 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
         });
     }
   });
-
-  const handleCloseEdit = () => {
-    setEditProps({
-      open: false,
-      id: "",
-    });
-  };
-
-  const editFunc = () => {
-    const info = JSON.parse(localStorage.getItem("info"));
-    setEditProps({
-      open: false,
-      id: "",
-    });
-  };
 
   return (
     <div className="main-table">
@@ -124,22 +117,21 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
                     <div>
                       <IconButton
                         aria-label="edit"
-                        onClick={() =>
-                          setEditProps({ open: !editProps.open, id: row._id })
+                        onClick={(e) =>
+                          setEditProps({
+                            ...editProps,
+                            open: true,
+                            changeRow: row,
+                          })
                         }
                       >
                         <EditIcon />
                       </IconButton>
                       <IconButton
                         aria-label="delete"
-                        onClick={() => (
-                          <ModalDel
-                            open={true}
-                            id={row._id}
-                            setData={setData}
-                            setFlag={setFlag}
-                          />
-                        )}
+                        onClick={(e) =>
+                          setDelProps({ ...delProps, open: true, id: row._id })
+                        }
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -151,6 +143,8 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
           </Table>
         </TableContainer>
       </div>
+      <ModalDel {...delProps} setDelProps={setDelProps} />
+      <ModalEdit {...editProps} setEditProps={setEditProps} />
     </div>
   );
 };
