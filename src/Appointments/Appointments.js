@@ -1,32 +1,21 @@
-import React, { useState } from "react";
-import { Route, Switch, useHistory, Redirect } from "react-router-dom";
-import Sort from "../Sort/Sort";
+import React, { useState, useEffect } from "react";
+import Add from "../Add/Add";
+import AppGrid from "../AppGrid/AppGrid";
 import "./Appointments.scss";
+
 const Appointments = ({ setAuthReg }) => {
-  const history = useHistory();
+  const [data, setData] = useState([]);
+  const [flag, setFlag] = useState(true);
+
+  useEffect(() => {
+    const login = localStorage.getItem("login");
+    setAuthReg({ text: "Приемы", login });
+  }, []);
+
   return (
     <div className="appoint-main">
-      <Sort />
-      {/* <form>
-        <div>
-          <label>Login:</label>
-          <input type="text" id="input-login" name="input-login" />
-          <label>Password:</label>
-          <input type="text" id="input-password" name="input-password" />
-        </div>
-        <button>Войти</button>
-      </form>
-      <a
-        onClick={() => {
-          setAuthReg({
-            text: "Зарегистрироваться в системе",
-            
-          });
-          history.push("/registration");
-        }}
-      >
-        Зарегистрироваться
-      </a> */}
+      <Add setData={setData} setFlag={setFlag} />
+      <AppGrid setData={setData} data={data} setFlag={setFlag} flag={flag} />
     </div>
   );
 };

@@ -1,31 +1,33 @@
 import React, { useState } from "react";
-import { Route, Switch, useHistory, Redirect, Link } from "react-router-dom";
+import { Route, Switch, Redirect, Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import Auth from "./Auth/Auth";
 import Reg from "./Reg/Reg";
 import Appointments from "./Appointments/Appointments";
 import icon from "./source/images/icon.png";
-import medical from "./source/images/medical-2.png";
 import "./App.scss";
 
 function App() {
-  const history = useHistory();
-  const [authReg, setAuthReg] = useState({
-    text: "Вход в систему",
-    flag: false,
-    login: "",
-    token: "",
-  });
+  const [authReg, setAuthReg] = useState({});
+
+  const goToAuth = () => {
+    const info = {
+      text: "Вход в систему",
+      login: "",
+    };
+    localStorage.setItem("info", JSON.stringify(info));
+    setAuthReg(info);
+  };
 
   return (
     <div className="App">
       <header className="App-header">
         <div>
-          <img className="App-logo" src={icon}></img>
+          <img className="App-logo" src={icon} alt="logo"></img>
           <h1>{authReg.text}</h1>
         </div>
 
-        {authReg.flag && (
+        {authReg.login && (
           <div>
             <h4>{authReg.login}</h4>
             <Link to="/authorization">
@@ -33,14 +35,7 @@ function App() {
                 variant="outlined"
                 color="primary"
                 type="none"
-                onClick={() => {
-                  setAuthReg({
-                    text: "Вход в систему",
-                    flag: false,
-                    login: "",
-                    token: "",
-                  });
-                }}
+                onClick={() => goToAuth()}
               >
                 Выйти
               </Button>
@@ -48,22 +43,19 @@ function App() {
           </div>
         )}
       </header>
-      <div className="main-reg">
-        {!authReg.flag && <img className="img-start" src={medical} />}
 
-        <Switch>
-          <Route path="/authorization">
-            <Auth setAuthReg={setAuthReg} />
-          </Route>
-          <Route path="/registration">
-            <Reg setAuthReg={setAuthReg} />
-          </Route>
-          <Route path="/appointments">
-            <Appointments setAuthReg={setAuthReg} />
-          </Route>
-          <Redirect from="/" to="/authorization" />
-        </Switch>
-      </div>
+      <Switch>
+        <Route path="/authorization">
+          <Auth setAuthReg={setAuthReg} />
+        </Route>
+        <Route path="/registration">
+          <Reg setAuthReg={setAuthReg} />
+        </Route>
+        <Route path="/appointments">
+          <Appointments setAuthReg={setAuthReg} />
+        </Route>
+        <Redirect from="/" to="/authorization" />
+      </Switch>
     </div>
   );
 }

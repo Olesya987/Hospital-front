@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Route, Switch, useHistory, Redirect } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import axios from "axios";
 import {
   IconButton,
@@ -14,6 +14,7 @@ import {
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import MuiAlert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
+import medical from "../source/images/medical-2.png";
 import "./Auth.scss";
 
 const Auth = ({ setAuthReg }) => {
@@ -30,14 +31,6 @@ const Auth = ({ setAuthReg }) => {
     showPassword: false,
   });
 
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
-
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
-  };
-
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -49,12 +42,13 @@ const Auth = ({ setAuthReg }) => {
     });
   };
 
+  useEffect(() => {
+    setAuthReg({ text: "Вход в систему", login: "" });
+  }, []);
+
   const goToReg = () => {
-    setAuthReg({
-      text: "Зарегистрироваться в системе",
-      login: "",
-      token: "",
-    });
+    setAuthReg({ text: "Зарегистрироваться в системе", login: "" });
+
     history.push("/registration");
   };
 
@@ -73,13 +67,9 @@ const Auth = ({ setAuthReg }) => {
         })
         .then((res) => {
           const { login, token } = res.data;
-          history.push(`/appointments`);
-          setAuthReg({
-            text: "Приемы",
-            flag: true,
-            login,
-            token,
-          });
+          localStorage.setItem("token", token);
+          localStorage.setItem("login", login);
+          setAuthReg({ text: "Приемы", login });
           setValues({
             login: "",
             password: "",
@@ -87,6 +77,7 @@ const Auth = ({ setAuthReg }) => {
             showPasswordRepeat: false,
             passwordRepeat: "",
           });
+          history.push(`/appointments`);
         })
         .catch((err) => {
           setState({
@@ -108,80 +99,92 @@ const Auth = ({ setAuthReg }) => {
   };
 
   return (
-    <div className="main-auth-field">
-      <h2>Войти в систему</h2>
-      <form onSubmit={checkUser}>
-        <div className="input-form-auth">
-          <div className="auth-div-login">
-            <TextField
-              id="input-login"
-              name="input-login"
-              label="Login"
-              type="text"
-              variant="outlined"
-              value={values.login}
-              onChange={handleChange("login")}
-            />
+    <div className="main-auth">
+      <img className="img-start" src={medical} alt="design" />
+      <div className="main-auth-field">
+        <h2>Войти в систему</h2>
+        <form onSubmit={checkUser}>
+          <div className="input-form-auth">
+            <div className="auth-div-login">
+              <TextField
+                id="input-login"
+                name="input-login"
+                label="Login"
+                type="text"
+                variant="outlined"
+                value={values.login}
+                onChange={(e) =>
+                  setValues({ ...values, login: e.target.value })
+                }
+              />
+            </div>
+
+            <FormControl className="root margin textField" variant="outlined">
+              <InputLabel htmlFor="outlined-adornment-password">
+                Password
+              </InputLabel>
+              <OutlinedInput
+                id="input-password"
+                name="input-password"
+                type={values.showPassword ? "text" : "password"}
+                value={values.password}
+                onChange={(e) =>
+                  setValues({ ...values, password: e.target.value })
+                }
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() =>
+                        setValues({
+                          ...values,
+                          showPassword: !values.showPassword,
+                        })
+                      }
+                      edge="end"
+                    >
+                      {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                labelWidth={70}
+              />
+            </FormControl>
           </div>
 
-          <FormControl className="root margin textField" variant="outlined">
-            <InputLabel htmlFor="outlined-adornment-password">
-              Password
-            </InputLabel>
-            <OutlinedInput
-              id="input-password"
-              name="input-password"
-              type={values.showPassword ? "text" : "password"}
-              value={values.password}
-              onChange={handleChange("password")}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    edge="end"
-                  >
-                    {values.showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
-              labelWidth={70}
-            />
-          </FormControl>
-        </div>
+          <Button variant="outlined" color="primary" type="none">
+            Войти
+          </Button>
+          <div className="auth-text" onClick={() => goToReg()}>
+            Зарегистрироваться
+          </div>
+        </form>
 
-        <Button variant="outlined" color="primary" type="none">
-          Войти
-        </Button>
-        <div className="auth-text" onClick={() => goToReg()}>
-          Зарегистрироваться
-        </div>
-      </form>
-
-      <Snackbar
-        open={state.open}
-        autoHideDuration={13000}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        enqueueSnackbar="error"
-        action={
-          <React.Fragment>
-            <CloseIcon color="secondary" onClick={handleClose} />
-          </React.Fragment>
-        }
-      >
-        <MuiAlert
-          elevation={6}
-          variant="filled"
-          onClose={handleClose}
-          severity="error"
+        <Snackbar
+          open={state.open}
+          autoHideDuration={13000}
+          onClose={() => handleClose()}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          enqueueSnackbar="error"
+          action={
+            <React.Fragment>
+              <CloseIcon color="secondary" onClick={() => handleClose()} />
+            </React.Fragment>
+          }
         >
-          {state.text}
-        </MuiAlert>
-      </Snackbar>
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            onClose={() => handleClose()}
+            severity="error"
+          >
+            {state.text}
+          </MuiAlert>
+        </Snackbar>
+      </div>
     </div>
   );
 };

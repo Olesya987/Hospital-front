@@ -1,0 +1,43 @@
+.table {
+  min-width: 650px;
+}
+
+.main-table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+.table-size {
+  width: 95%;
+}
+
+.text-wrap {
+  word-wrap: break-word;
+  max-width: 400px;
+}
+
+.container-grid {
+  max-height: 640px;
+}
+
+::-webkit-scrollbar {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #3f51b585;
+  border-radius: 10px;
+}
+
+.backdrop {
+  z-index: 4;
+  color: rgb(255, 255, 255);
+}
+
+.center-text.MuiTableCell-sizeSmall {
+  text-align: center;
+}

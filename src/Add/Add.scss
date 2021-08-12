@@ -1,0 +1,47 @@
+.sort-main {
+  height: 16%;
+  width: 100%;
+  margin: 20px 0;
+  box-shadow: 0px 7px 19px 0px #4b5e75;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.root {
+  flex-grow: 1;
+}
+
+.paper {
+  height: 140px;
+  width: 100px;
+}
+
+.MuiGrid-spacing-xs-1.MuiGrid-root {
+  width: 100%;
+  margin: 0;
+}
+
+.button-add {
+  width: 100%;
+  height: 100%;
+}
+
+.textField {
+  margin-left: 8px;
+  margin-right: 8px;
+  width: 200;
+}
+
+.MuiButton-outlined.MuiButtonBase-root {
+  padding: 15px;
+}
+
+.formControl1.MuiFormControl-root {
+  margin: 8px;
+  min-width: 225px;
+}
+
+.MuiInputBase-input.MuiOutlinedInput-input {
+  min-width: 225px;
+}
