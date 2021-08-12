@@ -14,6 +14,7 @@ import {
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import MuiAlert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
+import medical from "../source/images/medical-2.png";
 import "./Auth.scss";
 
 const Auth = ({ setAuthReg }) => {
@@ -56,7 +57,6 @@ const Auth = ({ setAuthReg }) => {
         text: "Зарегистрироваться в системе",
         login: "",
         token: "",
-        flag: false,
       })
     );
     setAuthReg(JSON.parse(localStorage.getItem("info")));
@@ -83,7 +83,6 @@ const Auth = ({ setAuthReg }) => {
             "info",
             JSON.stringify({
               text: "Приемы",
-              flag: true,
               login,
               token,
             })
@@ -118,80 +117,83 @@ const Auth = ({ setAuthReg }) => {
   };
 
   return (
-    <div className="main-auth-field">
-      <h2>Войти в систему</h2>
-      <form onSubmit={checkUser}>
-        <div className="input-form-auth">
-          <div className="auth-div-login">
-            <TextField
-              id="input-login"
-              name="input-login"
-              label="Login"
-              type="text"
-              variant="outlined"
-              value={values.login}
-              onChange={handleChange("login")}
-            />
+    <div className="main-auth">
+      <img className="img-start" src={medical} alt="design" />
+      <div className="main-auth-field">
+        <h2>Войти в систему</h2>
+        <form onSubmit={checkUser}>
+          <div className="input-form-auth">
+            <div className="auth-div-login">
+              <TextField
+                id="input-login"
+                name="input-login"
+                label="Login"
+                type="text"
+                variant="outlined"
+                value={values.login}
+                onChange={handleChange("login")}
+              />
+            </div>
+
+            <FormControl className="root margin textField" variant="outlined">
+              <InputLabel htmlFor="outlined-adornment-password">
+                Password
+              </InputLabel>
+              <OutlinedInput
+                id="input-password"
+                name="input-password"
+                type={values.showPassword ? "text" : "password"}
+                value={values.password}
+                onChange={handleChange("password")}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      edge="end"
+                    >
+                      {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                labelWidth={70}
+              />
+            </FormControl>
           </div>
 
-          <FormControl className="root margin textField" variant="outlined">
-            <InputLabel htmlFor="outlined-adornment-password">
-              Password
-            </InputLabel>
-            <OutlinedInput
-              id="input-password"
-              name="input-password"
-              type={values.showPassword ? "text" : "password"}
-              value={values.password}
-              onChange={handleChange("password")}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    edge="end"
-                  >
-                    {values.showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
-              labelWidth={70}
-            />
-          </FormControl>
-        </div>
+          <Button variant="outlined" color="primary" type="none">
+            Войти
+          </Button>
+          <div className="auth-text" onClick={() => goToReg()}>
+            Зарегистрироваться
+          </div>
+        </form>
 
-        <Button variant="outlined" color="primary" type="none">
-          Войти
-        </Button>
-        <div className="auth-text" onClick={() => goToReg()}>
-          Зарегистрироваться
-        </div>
-      </form>
-
-      <Snackbar
-        open={state.open}
-        autoHideDuration={13000}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        enqueueSnackbar="error"
-        action={
-          <React.Fragment>
-            <CloseIcon color="secondary" onClick={handleClose} />
-          </React.Fragment>
-        }
-      >
-        <MuiAlert
-          elevation={6}
-          variant="filled"
+        <Snackbar
+          open={state.open}
+          autoHideDuration={13000}
           onClose={handleClose}
-          severity="error"
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          enqueueSnackbar="error"
+          action={
+            <React.Fragment>
+              <CloseIcon color="secondary" onClick={handleClose} />
+            </React.Fragment>
+          }
         >
-          {state.text}
-        </MuiAlert>
-      </Snackbar>
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            onClose={handleClose}
+            severity="error"
+          >
+            {state.text}
+          </MuiAlert>
+        </Snackbar>
+      </div>
     </div>
   );
 };

@@ -17,9 +17,9 @@
   width: 100px;
 }
 
-.MuiGrid-spacing-xs-1 {
-  width: 100% !important;
-  margin: 0 !important;
+.MuiGrid-spacing-xs-1.MuiGrid-root {
+  width: 100%;
+  margin: 0;
 }
 
 .button-add {
@@ -33,15 +33,15 @@
   width: 200;
 }
 
-.MuiButton-outlined {
-  padding: 15px 15px !important;
+.MuiButton-outlined.MuiButtonBase-root {
+  padding: 15px 15px;
 }
 
-.formControl {
+.formControl1.MuiFormControl-root {
   margin: 8px;
-  min-width: 229px !important;
+  min-width: 225px;
 }
 
-.MuiInputBase-input{
-  min-width: 229px !important;
+.MuiInputBase-input.MuiOutlinedInput-input{
+  min-width: 225px;
 }

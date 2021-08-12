@@ -20,16 +20,19 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import "./AppGrid.scss";
 
-const AppGrid = ({ setData, data }) => {
+const AppGrid = ({ setData, data, setFlag, flag }) => {
   const [characters, setCharacters] = useState([]);
-  const characters2 = ["Имя", "Врач", "Дата", "Жалобы"];
   const [delProps, setDelProps] = React.useState({
+    open: false,
+    id: "",
+  });
+  const [editProps, setEditProps] = React.useState({
     open: false,
     id: "",
   });
 
   useEffect(() => {
-    if (data.length === 0) {
+    if (flag) {
       const info = JSON.parse(localStorage.getItem("info"));
       axios
         .get("http://localhost:8080/appointment/get", {
@@ -38,17 +41,50 @@ const AppGrid = ({ setData, data }) => {
         .then((res) => {
           const temp = res.data.appointments;
           const arr = [];
-          for (let key in temp[0]) {
-            if (key !== "_id") arr.push(key);
+          if (temp.length !== 0) {
+            for (let key in temp[0]) {
+              if (key !== "_id") arr.push({ value: key, translate: "" });
+            }
+            for (let i = 0; i < arr.length; i++) {
+              if (arr[i].value === "name") {
+                arr[i].translate = "Имя";
+                continue;
+              } else if (arr[i].value === "docName") {
+                arr[i].translate = "Врач";
+                continue;
+              } else if (arr[i].value === "date") {
+                arr[i].translate = "Дата";
+                continue;
+              } else if (arr[i].value === "complaints") {
+                arr[i].translate = "Жалобы";
+                continue;
+              } else arr[i].translate = arr[i].value;
+            }
           }
           setCharacters(arr);
           setData(res.data.appointments);
+          setFlag(false);
         });
     }
   });
 
   const handleCloseDel = () => {
     setDelProps({
+      open: false,
+      id: "",
+    });
+  };
+
+  const handleCloseEdit = () => {
+    setEditProps({
+      open: false,
+      id: "",
+    });
+  };
+
+  const editFunc = () => {
+    const info = JSON.parse(localStorage.getItem("info"));
+    setEditProps({
       open: false,
       id: "",
     });
@@ -62,6 +98,7 @@ const AppGrid = ({ setData, data }) => {
       })
       .then((res) => {
         setData(res.data.appointments);
+        setFlag(true);
       });
     setDelProps({
       open: false,
@@ -81,12 +118,16 @@ const AppGrid = ({ setData, data }) => {
           >
             <TableHead>
               <TableRow>
-                {characters2.map((value, index) => (
-                  <TableCell key={index} align="center" className="titles">
-                    <h2>{value}</h2>
-                  </TableCell>
-                ))}
-                <TableCell> </TableCell>
+                {characters.length !== 0 ? (
+                  characters.map((value, index) => (
+                    <TableCell key={index} align="center" className="titles">
+                      <h2>{value.translate}</h2>
+                    </TableCell>
+                  ))
+                ) : (
+                  <tr className='center-text'><h2>Приёмов нет</h2></tr>
+                )}
+                {characters.length !== 0 && <TableCell> </TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -100,12 +141,17 @@ const AppGrid = ({ setData, data }) => {
                       component="th"
                       scope="row"
                     >
-                      {row[name]}
+                      {row[name.value]}
                     </TableCell>
                   ))}
                   <TableCell align="center">
                     <div>
-                      <IconButton aria-label="edit">
+                      <IconButton
+                        aria-label="edit"
+                        onClick={() =>
+                          setEditProps({ open: !editProps.open, id: row._id })
+                        }
+                      >
                         <EditIcon />
                       </IconButton>
                       <IconButton

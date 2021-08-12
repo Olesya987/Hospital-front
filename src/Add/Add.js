@@ -9,9 +9,10 @@ import {
   TextField,
   Button,
 } from "@material-ui/core";
-import "./Sort.scss";
+import "./Add.scss";
+import { AirlineSeatFlatAngled } from "@material-ui/icons";
 
-const Sort = ({ setData }) => {
+const Add = ({ setData, setFlag }) => {
   const [require, setRequire] = useState({
     name: "",
     docName: "",
@@ -56,6 +57,7 @@ const Sort = ({ setData }) => {
           complaints: "",
         });
         setData(res.data.appointments);
+        setFlag(true);
       });
   };
 
@@ -142,37 +144,23 @@ const Sort = ({ setData }) => {
             </Grid>
             <Grid key="add" item>
               <div className="auth-div-login">
-                {!checkFields() ? (
-                  <Button
-                    className="button-add"
-                    variant="outlined"
-                    color="primary"
-                    type="none"
-                    disabled
-                  >
-                    Добавить
-                  </Button>
-                ) : (
-                  <Button
-                    className="button-add"
-                    variant="outlined"
-                    color="primary"
-                    type="none"
-                    onClick={() => addAppointment()}
-                  >
-                    Добавить
-                  </Button>
-                )}
+                <Button
+                  className="button-add"
+                  variant="outlined"
+                  color="primary"
+                  type="none"
+                  disabled={!checkFields()}
+                  onClick={() => addAppointment()}
+                >
+                  Добавить
+                </Button>
               </div>
             </Grid>
           </Grid>
         </Grid>
       </Grid>
     </div>
-    // <div className="sort-main">
-    //   sort
-    //   </div>
   );
 };
 
-export default Sort;
+export default Add;

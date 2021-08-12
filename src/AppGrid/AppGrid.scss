@@ -38,3 +38,11 @@
   z-index: 4;
   color: rgb(255, 255, 255);
 }
+
+.center-text{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
