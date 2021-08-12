@@ -59,15 +59,13 @@ const Reg = ({ setAuthReg }) => {
   };
 
   const goToAuth = () => {
-    localStorage.setItem(
-      "info",
-      JSON.stringify({
-        text: "Вход в систему",
-        login: "",
-        token: "",
-      })
-    );
-    setAuthReg(JSON.parse(localStorage.getItem("info")));
+    const info = {
+      text: "Вход в систему",
+      login: "",
+      token: "",
+    };
+    localStorage.setItem("info", JSON.stringify(info));
+    setAuthReg(info);
     history.push("/authorization");
   };
 
@@ -86,16 +84,13 @@ const Reg = ({ setAuthReg }) => {
         })
         .then((res) => {
           const { login, token } = res.data;
-          history.push(`/appointments`);
-          localStorage.setItem(
-            "info",
-            JSON.stringify({
-              text: "Приемы",
-              login,
-              token,
-            })
-          );
-          setAuthReg(JSON.parse(localStorage.getItem("info")));
+          const info = {
+            text: "Приемы",
+            login,
+            token,
+          };
+          localStorage.setItem("info", JSON.stringify(info));
+          setAuthReg(info);
           setValues({
             login: "",
             password: "",
@@ -103,6 +98,7 @@ const Reg = ({ setAuthReg }) => {
             showPasswordRepeat: false,
             passwordRepeat: "",
           });
+          history.push(`/appointments`);
         })
         .catch((err) => {
           if (err.response.status === 421) {
@@ -125,7 +121,7 @@ const Reg = ({ setAuthReg }) => {
       <img className="img-start" src={medical} alt="design" />
       <div className="main-reg-field">
         <h2>Регистрация</h2>
-        <form onSubmit={subUser}>
+        <form onSubmit={() => subUser()}>
           <div className="input-form-reg">
             <div className="reg-div-login">
               <TextField
@@ -135,7 +131,7 @@ const Reg = ({ setAuthReg }) => {
                 type="text"
                 variant="outlined"
                 value={values.login}
-                onChange={handleChange("login")}
+                onChange={() => handleChange("login")}
               />
             </div>
 
@@ -148,12 +144,12 @@ const Reg = ({ setAuthReg }) => {
                 name="input-password"
                 type={values.showPassword ? "text" : "password"}
                 value={values.password}
-                onChange={handleChange("password")}
+                onChange={() => handleChange("password")}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
+                      onClick={() => handleClickShowPassword()}
                       edge="end"
                     >
                       {values.showPassword ? <Visibility /> : <VisibilityOff />}
@@ -173,19 +169,15 @@ const Reg = ({ setAuthReg }) => {
                 name="input-password-repeat"
                 type={values.showPasswordRepeat ? "text" : "password"}
                 value={values.passwordRepeat}
-                onChange={handleChange("passwordRepeat")}
+                onChange={() => handleChange("passwordRepeat")}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password repeat visibility"
-                      onClick={handleClickShowPasswordRepeat}
+                      onClick={() => handleClickShowPasswordRepeat()}
                       edge="end"
                     >
-                      {values.showPasswordRepeat ? (
-                        <Visibility />
-                      ) : (
-                        <VisibilityOff />
-                      )}
+                      {values.showPasswordRepeat ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
                   </InputAdornment>
                 }
@@ -205,7 +197,7 @@ const Reg = ({ setAuthReg }) => {
         <Snackbar
           open={state.open}
           autoHideDuration={13000}
-          onClose={handleClose}
+          onClose={() => handleClose()}
           anchorOrigin={{
             vertical: "top",
             horizontal: "center",
@@ -213,14 +205,14 @@ const Reg = ({ setAuthReg }) => {
           enqueueSnackbar="error"
           action={
             <React.Fragment>
-              <CloseIcon color="secondary" onClick={handleClose} />
+              <CloseIcon color="secondary" onClick={() => handleClose()} />
             </React.Fragment>
           }
         >
           <MuiAlert
             elevation={6}
             variant="filled"
-            onClose={handleClose}
+            onClose={() => handleClose()}
             severity="error"
           >
             {state.text}

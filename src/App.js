@@ -17,15 +17,13 @@ function App() {
   );
 
   const goToAuth = () => {
-    localStorage.setItem(
-      "info",
-      JSON.stringify({
-        text: "Вход в систему",
-        login: "",
-        token: "",
-      })
-    );
-    setAuthReg(JSON.parse(localStorage.getItem("info")));
+    const info = {
+      text: "Вход в систему",
+      login: "",
+      token: "",
+    };
+    localStorage.setItem("info", JSON.stringify(info));
+    setAuthReg(info);
   };
 
   return (

@@ -9,23 +9,15 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Button,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
+import ModalDel from "../ModalDel/ModalDel";
+import ModalEdit from "../ModalEdit/ModalEdit";
 import "./AppGrid.scss";
 
 const AppGrid = ({ setData, data, setFlag, flag }) => {
   const [characters, setCharacters] = useState([]);
-  const [delProps, setDelProps] = React.useState({
-    open: false,
-    id: "",
-  });
   const [editProps, setEditProps] = React.useState({
     open: false,
     id: "",
@@ -43,22 +35,27 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
           const arr = [];
           if (temp.length !== 0) {
             for (let key in temp[0]) {
-              if (key !== "_id") arr.push({ value: key, translate: "" });
+              if (key !== "_id") arr.push({ immediately: key });
             }
             for (let i = 0; i < arr.length; i++) {
-              if (arr[i].value === "name") {
-                arr[i].translate = "Имя";
-                continue;
-              } else if (arr[i].value === "docName") {
-                arr[i].translate = "Врач";
-                continue;
-              } else if (arr[i].value === "date") {
-                arr[i].translate = "Дата";
-                continue;
-              } else if (arr[i].value === "complaints") {
-                arr[i].translate = "Жалобы";
-                continue;
-              } else arr[i].translate = arr[i].value;
+              switch (arr[i].immediately) {
+                case "name":
+                  arr[i].translate = "Имя";
+                  break;
+                case "docName":
+                  arr[i].translate = "Врач";
+                  break;
+                case "date":
+                  arr[i].translate = "Дата";
+                  break;
+                case "complaints":
+                  arr[i].translate = "Жалобы";
+                  break;
+
+                default:
+                  arr[i].translate = arr[i].immediately;
+                  break;
+              }
             }
           }
           setCharacters(arr);
@@ -67,13 +64,6 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
         });
     }
   });
-
-  const handleCloseDel = () => {
-    setDelProps({
-      open: false,
-      id: "",
-    });
-  };
 
   const handleCloseEdit = () => {
     setEditProps({
@@ -85,22 +75,6 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
   const editFunc = () => {
     const info = JSON.parse(localStorage.getItem("info"));
     setEditProps({
-      open: false,
-      id: "",
-    });
-  };
-
-  const delFunc = () => {
-    const info = JSON.parse(localStorage.getItem("info"));
-    axios
-      .delete(`http://localhost:8080/appointment/del?id=${delProps.id}`, {
-        headers: { authorization: info.token },
-      })
-      .then((res) => {
-        setData(res.data.appointments);
-        setFlag(true);
-      });
-    setDelProps({
       open: false,
       id: "",
     });
@@ -125,7 +99,9 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
                     </TableCell>
                   ))
                 ) : (
-                  <tr className='center-text'><h2>Приёмов нет</h2></tr>
+                  <TableCell className="center-text">
+                    <h2>Приёмов нет</h2>
+                  </TableCell>
                 )}
                 {characters.length !== 0 && <TableCell> </TableCell>}
               </TableRow>
@@ -141,7 +117,7 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
                       component="th"
                       scope="row"
                     >
-                      {row[name.value]}
+                      {row[name.immediately]}
                     </TableCell>
                   ))}
                   <TableCell align="center">
@@ -156,9 +132,14 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
                       </IconButton>
                       <IconButton
                         aria-label="delete"
-                        onClick={() =>
-                          setDelProps({ open: !delProps.open, id: row._id })
-                        }
+                        onClick={() => (
+                          <ModalDel
+                            open={true}
+                            id={row._id}
+                            setData={setData}
+                            setFlag={setFlag}
+                          />
+                        )}
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -170,32 +151,6 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
           </Table>
         </TableContainer>
       </div>
-      <Dialog
-        open={delProps.open}
-        onClose={handleCloseDel}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Удалить прием"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Вы действительно хотите удалить прием?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDel} color="primary" variant="outlined">
-            Отмена
-          </Button>
-          <Button
-            onClick={delFunc}
-            color="secondary"
-            autoFocus
-            variant="outlined"
-          >
-            Удалить
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   );
 };

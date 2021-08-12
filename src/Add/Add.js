@@ -10,7 +10,6 @@ import {
   Button,
 } from "@material-ui/core";
 import "./Add.scss";
-import { AirlineSeatFlatAngled } from "@material-ui/icons";
 
 const Add = ({ setData, setFlag }) => {
   const [require, setRequire] = useState({
@@ -80,7 +79,7 @@ const Add = ({ setData, setFlag }) => {
                   type="text"
                   variant="outlined"
                   value={require.name}
-                  onChange={handleChange("name")}
+                  onChange={() => handleChange("name")}
                 />
               </div>
             </Grid>
@@ -95,7 +94,7 @@ const Add = ({ setData, setFlag }) => {
                     id="input-docName"
                     name="input-docName"
                     value={require.docName}
-                    onChange={handleChange("docName")}
+                    onChange={() => handleChange("docName")}
                     label="Врач"
                   >
                     <MenuItem value="">
@@ -125,7 +124,7 @@ const Add = ({ setData, setFlag }) => {
                     shrink: true,
                   }}
                   value={require.date}
-                  onChange={handleChange("date")}
+                  onChange={() => handleChange("date")}
                 />
               </div>
             </Grid>
@@ -138,7 +137,7 @@ const Add = ({ setData, setFlag }) => {
                   type="text"
                   variant="outlined"
                   value={require.complaints}
-                  onChange={handleChange("complaints")}
+                  onChange={() => handleChange("complaints")}
                 />
               </div>
             </Grid>

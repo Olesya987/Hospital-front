@@ -1,24 +1,24 @@
-.table{
+.table {
   min-width: 650px;
 }
 
-.main-table{
+.main-table {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   width: 100%;
 }
-.table-size{
+.table-size {
   width: 95%;
 }
 
-.text-wrap{
+.text-wrap {
   word-wrap: break-word;
   max-width: 400px;
 }
 
-.container-grid{
+.container-grid {
   max-height: 640px;
 }
 
@@ -26,7 +26,6 @@
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   width: 7px;
-
 }
 
 ::-webkit-scrollbar-thumb {
@@ -39,10 +38,6 @@
   color: rgb(255, 255, 255);
 }
 
-.center-text{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+.center-text.MuiTableCell-sizeSmall {
+  text-align: center;
 }

@@ -51,15 +51,13 @@ const Auth = ({ setAuthReg }) => {
   };
 
   const goToReg = () => {
-    localStorage.setItem(
-      "info",
-      JSON.stringify({
-        text: "Зарегистрироваться в системе",
-        login: "",
-        token: "",
-      })
-    );
-    setAuthReg(JSON.parse(localStorage.getItem("info")));
+    const info = {
+      text: "Зарегистрироваться в системе",
+      login: "",
+      token: "",
+    };
+    localStorage.setItem("info", JSON.stringify(info));
+    setAuthReg(info);
 
     history.push("/registration");
   };
@@ -79,15 +77,13 @@ const Auth = ({ setAuthReg }) => {
         })
         .then((res) => {
           const { login, token } = res.data;
-          localStorage.setItem(
-            "info",
-            JSON.stringify({
-              text: "Приемы",
-              login,
-              token,
-            })
-          );
-          setAuthReg(JSON.parse(localStorage.getItem("info")));
+          const info = {
+            text: "Приемы",
+            login,
+            token,
+          };
+          localStorage.setItem("info", JSON.stringify(info));
+          setAuthReg(info);
           setValues({
             login: "",
             password: "",
@@ -131,7 +127,7 @@ const Auth = ({ setAuthReg }) => {
                 type="text"
                 variant="outlined"
                 value={values.login}
-                onChange={handleChange("login")}
+                onChange={() => handleChange("login")}
               />
             </div>
 
@@ -144,12 +140,12 @@ const Auth = ({ setAuthReg }) => {
                 name="input-password"
                 type={values.showPassword ? "text" : "password"}
                 value={values.password}
-                onChange={handleChange("password")}
+                onChange={() => handleChange("password")}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
+                      onClick={() => handleClickShowPassword}
                       edge="end"
                     >
                       {values.showPassword ? <Visibility /> : <VisibilityOff />}
@@ -172,7 +168,7 @@ const Auth = ({ setAuthReg }) => {
         <Snackbar
           open={state.open}
           autoHideDuration={13000}
-          onClose={handleClose}
+          onClose={() => handleClose()}
           anchorOrigin={{
             vertical: "top",
             horizontal: "center",
@@ -180,14 +176,14 @@ const Auth = ({ setAuthReg }) => {
           enqueueSnackbar="error"
           action={
             <React.Fragment>
-              <CloseIcon color="secondary" onClick={handleClose} />
+              <CloseIcon color="secondary" onClick={() => handleClose()} />
             </React.Fragment>
           }
         >
           <MuiAlert
             elevation={6}
             variant="filled"
-            onClose={handleClose}
+            onClose={() => handleClose()}
             severity="error"
           >
             {state.text}
