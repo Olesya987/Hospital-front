@@ -16,8 +16,8 @@ import ModalDel from "../ModalDel/ModalDel";
 import ModalEdit from "../ModalEdit/ModalEdit";
 import "./AppGrid.scss";
 
-const AppGrid = ({ setData, data, setFlag, flag }) => {
-  const [characters, setCharacters] = useState([]);
+const AppGrid = ({ setData, data, setFlag, flag, characters, setCharacters }) => {
+  
   const [delProps, setDelProps] = useState({
     open: false,
     id: "",
