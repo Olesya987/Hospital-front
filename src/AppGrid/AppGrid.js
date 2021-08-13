@@ -18,9 +18,13 @@ import "./AppGrid.scss";
 
 const AppGrid = ({ setData, data, setFlag, flag }) => {
   const [characters, setCharacters] = useState([]);
-  const [editProps, setEditProps] = React.useState({
+  const [delProps, setDelProps] = useState({
     open: false,
     id: "",
+  });
+  const [editProps, setEditProps] = useState({
+    open: false,
+    changeRow: {},
   });
 
   useEffect(() => {
@@ -65,18 +69,29 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
     }
   });
 
-  const handleCloseEdit = () => {
+  const handleSaveChangesModalEdit = (data) => {
+    setData(data);
+    setFlag(true);
+    handleCloseModalEdit();
+  };
+
+  const handleCloseModalEdit = () => {
     setEditProps({
       open: false,
-      id: "",
+      changeRow: {},
     });
   };
 
-  const editFunc = () => {
-    const info = JSON.parse(localStorage.getItem("info"));
-    setEditProps({
+  const handleSaveChangesModalDel = (data) => {
+    setData(data);
+    setFlag(true);
+    handleCloseModalDel();
+  };
+
+  const handleCloseModalDel = () => {
+    setDelProps({
       open: false,
-      id: "",
+      changeRow: {},
     });
   };
 
@@ -124,22 +139,21 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
                     <div>
                       <IconButton
                         aria-label="edit"
-                        onClick={() =>
-                          setEditProps({ open: !editProps.open, id: row._id })
+                        onClick={(e) =>
+                          setEditProps({
+                            ...editProps,
+                            open: true,
+                            changeRow: row,
+                          })
                         }
                       >
                         <EditIcon />
                       </IconButton>
                       <IconButton
                         aria-label="delete"
-                        onClick={() => (
-                          <ModalDel
-                            open={true}
-                            id={row._id}
-                            setData={setData}
-                            setFlag={setFlag}
-                          />
-                        )}
+                        onClick={(e) =>
+                          setDelProps({ ...delProps, open: true, id: row._id })
+                        }
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -151,6 +165,20 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
           </Table>
         </TableContainer>
       </div>
+      {delProps.open && (
+        <ModalDel
+          {...delProps}
+          onCloseModalDel={handleCloseModalDel}
+          onSaveChangesModal={handleSaveChangesModalDel}
+        />
+      )}
+      {editProps.open && (
+        <ModalEdit
+          {...editProps}
+          onCloseModalEdit={handleCloseModalEdit}
+          onSaveChangesModal={handleSaveChangesModalEdit}
+        />
+      )}
     </div>
   );
 };

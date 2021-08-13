@@ -11,12 +11,8 @@ function App() {
   const [authReg, setAuthReg] = useState({});
 
   const goToAuth = () => {
-    const info = {
-      text: "Вход в систему",
-      login: "",
-    };
-    localStorage.setItem("info", JSON.stringify(info));
-    setAuthReg(info);
+    localStorage.clear();
+    setAuthReg({ text: "Вход в систему", login: "" });
   };
 
   return (
