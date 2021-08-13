@@ -11,32 +11,44 @@ import {
   MenuItem,
   Select,
   TextField,
+  Snackbar,
 } from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
+import CloseIcon from "@material-ui/icons/Close";
 import "./ModalEdit.scss";
 
-const ModalEdit = ({ open, changeRow, setData, setFlag, setEditProps }) => {
+const ModalEdit = ({
+  open,
+  changeRow,
+  onCloseModalEdit,
+  onSaveChangesModal,
+}) => {
   const [changes, setChanges] = useState({});
+  const doctors = [
+    "Зайцева Афродита Петровна",
+    "Пульц Генадий Евгеньевич",
+    "Доктор Плюшева",
+  ];
+  const [state, setState] = useState({
+    open: false,
+    text: "",
+  });
 
   useEffect(() => {
     if (!changes.name) {
-      setChanges({
-        _id:changeRow._id,
-        name:changeRow.name,
-        docName:changeRow.docName,
-        date:changeRow.date,
-        complaints:changeRow.complaints,
-      });
+      setChanges(changeRow);
     }
   }, [changeRow]);
 
-  const handleCloseEdit = () => {
-    setEditProps({
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setState({
       open: false,
-      changeRow: {},
-      setData,
-      setFlag,
+      text: "",
     });
-    setChanges({});
   };
 
   const editFunc = () => {
@@ -57,22 +69,23 @@ const ModalEdit = ({ open, changeRow, setData, setFlag, setEditProps }) => {
         }
       )
       .then((res) => {
-        setData(res.data.appointments);
-        setFlag(true);
-        setChanges({});
+        onSaveChangesModal(res.data.appointments);
+      })
+      .catch((err) => {
+        setState({
+          open: true,
+          text:
+            err.response.status === 420
+              ? "Некоторые поля не заполнены, должны быть заполнены все поля"
+              : "",
+        });
       });
-    setEditProps({
-      open: false,
-      changeRow: {},
-      setData,
-      setFlag,
-    });
   };
 
   return (
     <Dialog
       open={open}
-      onClose={() => handleCloseEdit()}
+      onClose={() => onCloseModalEdit()}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
@@ -98,7 +111,7 @@ const ModalEdit = ({ open, changeRow, setData, setFlag, setEditProps }) => {
               labelId="demo-simple-select-outlined-label"
               id="input-docName"
               name="input-docName"
-              value={changes.docName}
+              value={changes.docName || ""}
               onChange={(e) =>
                 setChanges({ ...changes, docName: e.target.value })
               }
@@ -107,13 +120,11 @@ const ModalEdit = ({ open, changeRow, setData, setFlag, setEditProps }) => {
               <MenuItem value="">
                 <em>Врач не выбран</em>
               </MenuItem>
-              <MenuItem value={"Зайцева Афродита Петровна"}>
-                Зайцева Афродита Петровна
-              </MenuItem>
-              <MenuItem value={"Пульц Генадий Евгеньевич"}>
-                Пульц Генадий Евгеньевич
-              </MenuItem>
-              <MenuItem value={"Доктор Плюшева"}>Доктор Плюшева</MenuItem>
+              {doctors.map((val, index) => (
+                <MenuItem key={index} value={val}>
+                  {val}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </div>
@@ -152,7 +163,7 @@ const ModalEdit = ({ open, changeRow, setData, setFlag, setEditProps }) => {
       <DialogActions>
         <div className="edit-div-buttons">
           <Button
-            onClick={() => handleCloseEdit()}
+            onClick={() => onCloseModalEdit()}
             color="primary"
             variant="outlined"
           >
@@ -168,6 +179,30 @@ const ModalEdit = ({ open, changeRow, setData, setFlag, setEditProps }) => {
           </Button>
         </div>
       </DialogActions>
+      <Snackbar
+        open={state.open}
+        autoHideDuration={13000}
+        onClose={() => handleClose()}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        enqueueSnackbar="error2"
+        action={
+          <React.Fragment>
+            <CloseIcon color="secondary" onClick={() => handleClose()} />
+          </React.Fragment>
+        }
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={() => handleClose()}
+          severity="error"
+        >
+          {state.text}
+        </MuiAlert>
+      </Snackbar>
     </Dialog>
   );
 };

@@ -21,14 +21,10 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
   const [delProps, setDelProps] = useState({
     open: false,
     id: "",
-    setData,
-    setFlag,
   });
   const [editProps, setEditProps] = useState({
     open: false,
     changeRow: {},
-    setData,
-    setFlag,
   });
 
   useEffect(() => {
@@ -72,6 +68,32 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
         });
     }
   });
+
+  const handleSaveChangesModalEdit = (data) => {
+    setData(data);
+    setFlag(true);
+    handleCloseModalEdit();
+  };
+
+  const handleCloseModalEdit = () => {
+    setEditProps({
+      open: false,
+      changeRow: {},
+    });
+  };
+
+  const handleSaveChangesModalDel = (data) => {
+    setData(data);
+    setFlag(true);
+    handleCloseModalDel();
+  };
+
+  const handleCloseModalDel = () => {
+    setDelProps({
+      open: false,
+      changeRow: {},
+    });
+  };
 
   return (
     <div className="main-table">
@@ -143,8 +165,20 @@ const AppGrid = ({ setData, data, setFlag, flag }) => {
           </Table>
         </TableContainer>
       </div>
-      <ModalDel {...delProps} setDelProps={setDelProps} />
-      <ModalEdit {...editProps} setEditProps={setEditProps} />
+      {delProps.open && (
+        <ModalDel
+          {...delProps}
+          onCloseModalDel={handleCloseModalDel}
+          onSaveChangesModal={handleSaveChangesModalDel}
+        />
+      )}
+      {editProps.open && (
+        <ModalEdit
+          {...editProps}
+          onCloseModalEdit={handleCloseModalEdit}
+          onSaveChangesModal={handleSaveChangesModalEdit}
+        />
+      )}
     </div>
   );
 };

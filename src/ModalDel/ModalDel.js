@@ -10,16 +10,7 @@ import {
 } from "@material-ui/core";
 import "./ModalDel.scss";
 
-const ModalDel = ({ open, id, setData, setFlag, setDelProps }) => {
-  const handleCloseDel = () => {
-    setDelProps({
-      open: false,
-      id: "",
-      setData,
-      setFlag,
-    });
-  };
-
+const ModalDel = ({ open, id, onCloseModalDel, onSaveChangesModal }) => {
   const delFunc = () => {
     const token = localStorage.getItem("token");
     axios
@@ -27,21 +18,14 @@ const ModalDel = ({ open, id, setData, setFlag, setDelProps }) => {
         headers: { authorization: token },
       })
       .then((res) => {
-        setData(res.data.appointments);
-        setFlag(true);
+        onSaveChangesModal(res.data.appointments);
       });
-    setDelProps({
-      open: false,
-      id: "",
-      setData,
-      setFlag,
-    });
   };
 
   return (
     <Dialog
       open={open}
-      onClose={() => handleCloseDel()}
+      onClose={() => onCloseModalDel()}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
@@ -53,7 +37,7 @@ const ModalDel = ({ open, id, setData, setFlag, setDelProps }) => {
       </DialogContent>
       <DialogActions>
         <Button
-          onClick={() => handleCloseDel()}
+          onClick={() => onCloseModalDel()}
           color="primary"
           variant="outlined"
         >
