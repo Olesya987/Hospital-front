@@ -10,7 +10,7 @@ import {
 } from "@material-ui/core";
 import "./ModalDel.scss";
 
-const ModalDel = ({ open, id, onCloseModalDel, onSaveChangesModal }) => {
+const ModalDel = ({ open, id, onCloseModalDel, onSaveChangesModal, setLength }) => {
   const delFunc = () => {
     const token = localStorage.getItem("token");
     axios
@@ -19,6 +19,7 @@ const ModalDel = ({ open, id, onCloseModalDel, onSaveChangesModal }) => {
       })
       .then((res) => {
         onSaveChangesModal(res.data.appointments);
+        setLength(res.data.appointments.length);
       });
   };
 

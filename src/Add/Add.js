@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import "./Add.scss";
 
-const Add = ({ setData, setFlag }) => {
+const Add = ({ setData, setFlag, setLength }) => {
   const [require, setRequire] = useState({
     name: "",
     docName: "",
@@ -52,7 +52,8 @@ const Add = ({ setData, setFlag }) => {
           complaints: "",
         });
         setData(res.data.appointments);
-        setFlag(true);
+        // setFlag(true);
+        setLength(res.data.appointments.length);
       });
   };
 
@@ -75,7 +76,9 @@ const Add = ({ setData, setFlag }) => {
                   type="text"
                   variant="outlined"
                   value={require.name}
-                  onChange={(e) => setRequire({ ...require, name: e.target.value })}
+                  onChange={(e) =>
+                    setRequire({ ...require, name: e.target.value })
+                  }
                 />
               </div>
             </Grid>
@@ -90,7 +93,9 @@ const Add = ({ setData, setFlag }) => {
                     id="input-docName"
                     name="input-docName"
                     value={require.docName}
-                    onChange={(e) => setRequire({ ...require, docName: e.target.value })}
+                    onChange={(e) =>
+                      setRequire({ ...require, docName: e.target.value })
+                    }
                     label="Врач"
                   >
                     <MenuItem value="">
@@ -120,7 +125,9 @@ const Add = ({ setData, setFlag }) => {
                     shrink: true,
                   }}
                   value={require.date}
-                  onChange={(e) => setRequire({ ...require, date: e.target.value })}
+                  onChange={(e) =>
+                    setRequire({ ...require, date: e.target.value })
+                  }
                 />
               </div>
             </Grid>
@@ -133,7 +140,9 @@ const Add = ({ setData, setFlag }) => {
                   type="text"
                   variant="outlined"
                   value={require.complaints}
-                  onChange={(e) => setRequire({ ...require, complaints: e.target.value })}
+                  onChange={(e) =>
+                    setRequire({ ...require, complaints: e.target.value })
+                  }
                 />
               </div>
             </Grid>

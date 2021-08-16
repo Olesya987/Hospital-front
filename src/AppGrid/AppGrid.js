@@ -16,8 +16,16 @@ import ModalDel from "../ModalDel/ModalDel";
 import ModalEdit from "../ModalEdit/ModalEdit";
 import "./AppGrid.scss";
 
-const AppGrid = ({ setData, data, setFlag, flag, characters, setCharacters }) => {
-  
+const AppGrid = ({
+  setData,
+  data,
+  setFlag,
+  flag,
+  characters,
+  setCharacters,
+  setLength,
+  length,
+}) => {
   const [delProps, setDelProps] = useState({
     open: false,
     id: "",
@@ -65,13 +73,14 @@ const AppGrid = ({ setData, data, setFlag, flag, characters, setCharacters }) =>
           setCharacters(arr);
           setData(res.data.appointments);
           setFlag(false);
+          setLength(data.length);
         });
     }
   });
 
   const handleSaveChangesModalEdit = (data) => {
     setData(data);
-    setFlag(true);
+    // setFlag(true);
     handleCloseModalEdit();
   };
 
@@ -84,7 +93,7 @@ const AppGrid = ({ setData, data, setFlag, flag, characters, setCharacters }) =>
 
   const handleSaveChangesModalDel = (data) => {
     setData(data);
-    setFlag(true);
+    // setFlag(true);
     handleCloseModalDel();
   };
 
@@ -170,6 +179,7 @@ const AppGrid = ({ setData, data, setFlag, flag, characters, setCharacters }) =>
           {...delProps}
           onCloseModalDel={handleCloseModalDel}
           onSaveChangesModal={handleSaveChangesModalDel}
+          setLength={setLength}
         />
       )}
       {editProps.open && (
