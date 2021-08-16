@@ -21,7 +21,7 @@ const Filter = ({ data, setData, setFlag, setLength, length }) => {
     arr = data.filter(
       (elem) => elem.date <= date.after && elem.date >= date.before
     );
-    setData(arr);
+    setData([...arr]);
     setLength(arr.length);
   };
 
