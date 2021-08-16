@@ -1,37 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Grid, TextField, IconButton } from "@material-ui/core";
-import "./Filter.scss";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import DeleteIcon from "@material-ui/icons/Delete";
+import "./Filter.scss";
 
 const Filter = ({ data, setData, setFlag, setLength, length }) => {
   const [addFilter, setFilter] = useState(false);
-
   const [date, setDate] = useState({
     before: "0000-00-00",
     after: "9999-99-99",
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     filterDate();
-
-  }, [length])
-
-  const setB = (e) => {
-    setDate({ ...date, before: e.target.value || "0000-00-00" });
-  };
-  const setA = (e) => {
-    setDate({ ...date, after: e.target.value || "9999-99-99" });
-  };
+  }, [length]);
 
   const filterDate = () => {
-    const arr = [];
-    data.forEach((elem) => {
-      if (elem.date <= date.after && elem.date >= date.before) {
-        arr.push(elem);
-      }
-    });
+    let arr = [];
+    arr = data.filter(
+      (elem) => elem.date <= date.after && elem.date >= date.before
+    );
     setData(arr);
     setLength(arr.length);
   };
@@ -45,10 +34,15 @@ const Filter = ({ data, setData, setFlag, setLength, length }) => {
     setFlag(true);
   };
 
+  const reFilter = () => {
+    setFlag(true);
+    filterDate();
+  };
+
   return (
     <Grid container className="root" spacing={1}>
       <Grid item xs={12}>
-        {!addFilter && (
+        {!addFilter ? (
           <Grid
             container
             alignItems="center"
@@ -63,8 +57,7 @@ const Filter = ({ data, setData, setFlag, setLength, length }) => {
               <AddBoxIcon />
             </IconButton>
           </Grid>
-        )}
-        {addFilter && (
+        ) : (
           <Grid
             container
             alignItems="center"
@@ -84,7 +77,9 @@ const Filter = ({ data, setData, setFlag, setLength, length }) => {
                     shrink: true,
                   }}
                   value={date.before}
-                  onChange={(e) => setB(e)}
+                  onChange={(e) =>
+                    setDate({ ...date, before: e.target.value || "0000-00-00" })
+                  }
                 />
               </div>
             </Grid>
@@ -101,11 +96,13 @@ const Filter = ({ data, setData, setFlag, setLength, length }) => {
                     shrink: true,
                   }}
                   value={date.after}
-                  onChange={(e) => setA(e)}
+                  onChange={(e) =>
+                    setDate({ ...date, after: e.target.value || "9999-99-99" })
+                  }
                 />
               </div>
             </Grid>
-            <IconButton aria-label="filter" onClick={(e) => filterDate()}>
+            <IconButton aria-label="filter" onClick={(e) => reFilter()}>
               <FilterListIcon />
             </IconButton>
             <IconButton aria-label="del-filter" onClick={(e) => clearDate()}>
