@@ -17,12 +17,11 @@ const Filter = ({ data, setData, setFlag, setLength, length }) => {
   }, [length]);
 
   const filterDate = () => {
-    let arr = [];
-    arr = data.filter(
+    data = data.filter(
       (elem) => elem.date <= date.after && elem.date >= date.before
     );
-    setData([...arr]);
-    setLength(arr.length);
+    setData([...data]);
+    setLength(data.length);
   };
 
   const clearDate = () => {
