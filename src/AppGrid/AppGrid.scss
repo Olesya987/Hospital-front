@@ -20,7 +20,7 @@
 }
 
 .container-grid {
-  max-height: 500px;
+  max-height: 480px;
 }
 
 ::-webkit-scrollbar {
@@ -45,13 +45,13 @@
 
 @media screen and (max-width: 1290px) {
   .container-grid {
-    max-height: 450px;
+    max-height: 420px;
   }
 }
 
 @media screen and (max-width: 1145px) {
   .container-grid {
-    max-height: 380px;
+    max-height: 350px;
   }
 }
 
