@@ -11,6 +11,9 @@ const Appointments = ({ setAuthReg }) => {
   const [characters, setCharacters] = useState([]);
   const [flag, setFlag] = useState(true);
   const [isChange, setChange] = useState(false);
+  const [allRows, setAllRows] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsOnPage, setRowsOnPage] = useState(5);
 
   useEffect(() => {
     const login = localStorage.getItem("login");
@@ -19,14 +22,14 @@ const Appointments = ({ setAuthReg }) => {
 
   return (
     <div className="appoint-main">
-      <Add setData={setData} setFlag={setFlag} setLength={setLength} />
+      <Add setFlag={setFlag} flag={flag} />
       <Sort
-        data={data}
         setData={setData}
         characters={characters}
         setFlag={setFlag}
-        length={length}
         isChange={isChange}
+        currentPage={currentPage}
+        rowsOnPage={rowsOnPage}
       />
       <Filter
         data={data}
@@ -34,6 +37,9 @@ const Appointments = ({ setAuthReg }) => {
         setFlag={setFlag}
         setLength={setLength}
         length={length}
+        allRows={allRows}
+        currentPage={currentPage}
+        rowsOnPage={rowsOnPage}
       />
       <AppGrid
         setData={setData}
@@ -42,9 +48,14 @@ const Appointments = ({ setAuthReg }) => {
         flag={flag}
         characters={characters}
         setCharacters={setCharacters}
-        setLength={setLength}
         setChange={setChange}
         isChange={isChange}
+        allRows={allRows}
+        setAllRows={setAllRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        rowsOnPage={rowsOnPage}
+        setRowsOnPage={setRowsOnPage}
       />
     </div>
   );

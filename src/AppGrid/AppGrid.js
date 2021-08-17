@@ -24,13 +24,15 @@ const AppGrid = ({
   flag,
   characters,
   setCharacters,
-  setLength,
   setChange,
   isChange,
+  allRows,
+  setAllRows,
+  currentPage,
+  setCurrentPage,
+  rowsOnPage,
+  setRowsOnPage,
 }) => {
-  const [allRows, setAllRows] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsOnPage, setRowsOnPage] = useState(5);
   const [delProps, setDelProps] = useState({
     open: false,
     id: "",
@@ -77,18 +79,16 @@ const AppGrid = ({
             }
           }
         }
-        setFlag(false);
         setCharacters(arr);
         setData(res.data.appointments);
         setAllRows(res.data.allRows);
-        setLength(data.length);
+        setChange(!isChange);
       });
-  }, [currentPage, rowsOnPage]);
+  }, [currentPage, rowsOnPage, flag]);
 
   const handleSaveChangesModalEdit = (data) => {
-    setData(data);
+    setFlag(!flag);
     handleCloseModalEdit();
-    setChange(!isChange);
   };
 
   const handleCloseModalEdit = () => {
@@ -99,7 +99,7 @@ const AppGrid = ({
   };
 
   const handleSaveChangesModalDel = (data) => {
-    setData(data);
+    setFlag(!flag);
     handleCloseModalDel();
   };
 
@@ -110,9 +110,12 @@ const AppGrid = ({
     });
   };
 
-  const handleChangePage = (event, newPage) => setCurrentPage(newPage + 1);
-  const handleChangeRowsPerPage = (event) =>
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage + 1);
+  };
+  const handleChangeRowsPerPage = (event) => {
     setRowsOnPage(parseInt(event.target.value, 10));
+  };
 
   return (
     <div className="main-table">
@@ -198,7 +201,6 @@ const AppGrid = ({
           {...delProps}
           onCloseModalDel={handleCloseModalDel}
           onSaveChangesModal={handleSaveChangesModalDel}
-          setLength={setLength}
         />
       )}
       {editProps.open && (

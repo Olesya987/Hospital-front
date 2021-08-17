@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Grid,
   FormControl,
@@ -8,7 +9,14 @@ import {
 } from "@material-ui/core";
 import "./Sort.scss";
 
-const Sort = ({ data, setData, characters, setFlag, length, isChange }) => {
+const Sort = ({
+  setData,
+  characters,
+  setFlag,
+  isChange,
+  currentPage,
+  rowsOnPage,
+}) => {
   const [sortItem, setSortItem] = useState({
     value: "",
     sort: "asc",
@@ -17,37 +25,37 @@ const Sort = ({ data, setData, characters, setFlag, length, isChange }) => {
 
   useEffect(() => {
     if (sortItem.value !== "") {
-      if (sortItem.sort === "desc") {
-        data.sort((a, b) =>
-          a[sortItem.value] > b[sortItem.value]
-            ? -1
-            : a[sortItem.value] < b[sortItem.value]
-            ? 1
-            : 0
-        );
-      } else {
-        data.sort((a, b) =>
-          a[sortItem.value] < b[sortItem.value]
-            ? -1
-            : a[sortItem.value] > b[sortItem.value]
-            ? 1
-            : 0
-        );
-      }
-      setData([...data]);
+      const token = localStorage.getItem("token");
+      axios
+        .post(
+          `http://localhost:8080/appointment/sort/${currentPage}/${rowsOnPage}`,
+          {
+            value: sortItem.value,
+            direction: sortItem.sort === "asc" ? 1 : -1,
+          },
+          {
+            headers: { authorization: token },
+          }
+        )
+        .then((res) => setData(res.data.appointments));
     }
-  }, [length, isChange]);
+  }, [isChange]);
 
   const resetSort = (e) => {
     if (e.target.value.length !== 0) {
-      data.sort((a, b) =>
-        a[e.target.value] < b[e.target.value]
-          ? -1
-          : a[e.target.value] > b[e.target.value]
-          ? 1
-          : 0
-      );
-      setData([...data]);
+      const token = localStorage.getItem("token");
+      axios
+        .post(
+          `http://localhost:8080/appointment/sort/${currentPage}/${rowsOnPage}`,
+          {
+            value: e.target.value,
+            direction: sortItem.sort === "asc" ? 1 : -1,
+          },
+          {
+            headers: { authorization: token },
+          }
+        )
+        .then((res) => setData(res.data.appointments));
     } else {
       setFlag(true);
     }
@@ -57,24 +65,19 @@ const Sort = ({ data, setData, characters, setFlag, length, isChange }) => {
   const resetDirection = (e) => {
     if (e.target.value.length !== 0) {
       setSortItem({ ...sortItem, sort: e.target.value });
-      if (e.target.value === "desc") {
-        data.sort((a, b) =>
-          a[sortItem.value] > b[sortItem.value]
-            ? -1
-            : a[sortItem.value] < b[sortItem.value]
-            ? 1
-            : 0
-        );
-      } else {
-        data.sort((a, b) =>
-          a[sortItem.value] < b[sortItem.value]
-            ? -1
-            : a[sortItem.value] > b[sortItem.value]
-            ? 1
-            : 0
-        );
-      }
-      setData([...data]);
+      const token = localStorage.getItem("token");
+      axios
+        .post(
+          `http://localhost:8080/appointment/sort/${currentPage}/${rowsOnPage}`,
+          {
+            value: sortItem.value,
+            direction: e.target.value === "asc" ? 1 : -1,
+          },
+          {
+            headers: { authorization: token },
+          }
+        )
+        .then((res) => setData(res.data.appointments));
     } else {
       setSortItem({ value: "", sort: "asc" });
       setFlag(true);
