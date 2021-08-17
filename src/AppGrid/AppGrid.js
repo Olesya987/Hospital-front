@@ -7,6 +7,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TablePagination,
   Paper,
   IconButton,
 } from "@material-ui/core";
@@ -27,6 +28,9 @@ const AppGrid = ({
   setChange,
   isChange,
 }) => {
+  const [allRows, setAllRows] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsOnPage, setRowsOnPage] = useState(5);
   const [delProps, setDelProps] = useState({
     open: false,
     id: "",
@@ -37,47 +41,49 @@ const AppGrid = ({
   });
 
   useEffect(() => {
-    if (flag) {
-      const token = localStorage.getItem("token");
-      axios
-        .get("http://localhost:8080/appointment/get", {
+    const token = localStorage.getItem("token");
+    axios
+      .get(
+        `http://localhost:8080/appointment/get/${currentPage}/${rowsOnPage}`,
+        {
           headers: { authorization: token },
-        })
-        .then((res) => {
-          const temp = res.data.appointments;
-          const arr = [];
-          if (temp.length !== 0) {
-            for (let key in temp[0]) {
-              if (key !== "_id") arr.push({ immediately: key });
-            }
-            for (let i = 0; i < arr.length; i++) {
-              switch (arr[i].immediately) {
-                case "name":
-                  arr[i].translate = "Имя";
-                  break;
-                case "docName":
-                  arr[i].translate = "Врач";
-                  break;
-                case "date":
-                  arr[i].translate = "Дата";
-                  break;
-                case "complaints":
-                  arr[i].translate = "Жалобы";
-                  break;
+        }
+      )
+      .then((res) => {
+        const temp = res.data.appointments;
+        const arr = [];
+        if (temp.length !== 0) {
+          for (let key in temp[0]) {
+            if (key !== "_id") arr.push({ immediately: key });
+          }
+          for (let i = 0; i < arr.length; i++) {
+            switch (arr[i].immediately) {
+              case "name":
+                arr[i].translate = "Имя";
+                break;
+              case "docName":
+                arr[i].translate = "Врач";
+                break;
+              case "date":
+                arr[i].translate = "Дата";
+                break;
+              case "complaints":
+                arr[i].translate = "Жалобы";
+                break;
 
-                default:
-                  arr[i].translate = arr[i].immediately;
-                  break;
-              }
+              default:
+                arr[i].translate = arr[i].immediately;
+                break;
             }
           }
-          setFlag(false);
-          setCharacters(arr);
-          setData(res.data.appointments);
-          setLength(data.length);
-        });
-    }
-  });
+        }
+        setFlag(false);
+        setCharacters(arr);
+        setData(res.data.appointments);
+        setAllRows(res.data.allRows);
+        setLength(data.length);
+      });
+  }, [currentPage, rowsOnPage]);
 
   const handleSaveChangesModalEdit = (data) => {
     setData(data);
@@ -103,6 +109,10 @@ const AppGrid = ({
       changeRow: {},
     });
   };
+
+  const handleChangePage = (event, newPage) => setCurrentPage(newPage + 1);
+  const handleChangeRowsPerPage = (event) =>
+    setRowsOnPage(parseInt(event.target.value, 10));
 
   return (
     <div className="main-table">
@@ -173,6 +183,15 @@ const AppGrid = ({
             </TableBody>
           </Table>
         </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 15]}
+          component="div"
+          count={allRows}
+          rowsPerPage={rowsOnPage}
+          page={currentPage - 1}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </div>
       {delProps.open && (
         <ModalDel
