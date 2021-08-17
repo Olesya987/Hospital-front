@@ -110,13 +110,9 @@ const AppGrid = ({
     });
   };
 
-  const handleChangePage = (event, newPage) => {
-    setCurrentPage(newPage + 1);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangePage = (event, newPage) => setCurrentPage(newPage + 1);
+  const handleChangeRowsPerPage = (event) =>
     setRowsOnPage(parseInt(event.target.value, 10));
-  };
 
   return (
     <div className="main-table">
@@ -188,7 +184,7 @@ const AppGrid = ({
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 7, 9]}
+          rowsPerPageOptions={[5, 10, 15]}
           component="div"
           count={allRows}
           rowsPerPage={rowsOnPage}
