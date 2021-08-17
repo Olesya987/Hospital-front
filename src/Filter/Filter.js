@@ -58,6 +58,7 @@ const Filter = ({ data, setData, setFlag, setLength, length }) => {
           </Grid>
         ) : (
           <Grid
+            id="gridFilter"
             container
             alignItems="center"
             justifyContent="center"
@@ -101,12 +102,14 @@ const Filter = ({ data, setData, setFlag, setLength, length }) => {
                 />
               </div>
             </Grid>
-            <IconButton aria-label="filter" onClick={(e) => reFilter()}>
-              <FilterListIcon />
-            </IconButton>
-            <IconButton aria-label="del-filter" onClick={(e) => clearDate()}>
-              <DeleteIcon />
-            </IconButton>
+            <Grid key="buttons" item>
+              <IconButton aria-label="filter" onClick={(e) => reFilter()}>
+                <FilterListIcon />
+              </IconButton>
+              <IconButton aria-label="del-filter" onClick={(e) => clearDate()}>
+                <DeleteIcon />
+              </IconButton>
+            </Grid>
           </Grid>
         )}
       </Grid>

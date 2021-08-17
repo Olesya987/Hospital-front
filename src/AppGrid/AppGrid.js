@@ -80,7 +80,7 @@ const AppGrid = ({
 
   const handleSaveChangesModalEdit = (data) => {
     setData(data);
-    // setFlag(true);
+    setFlag(true);
     handleCloseModalEdit();
   };
 
@@ -93,7 +93,6 @@ const AppGrid = ({
 
   const handleSaveChangesModalDel = (data) => {
     setData(data);
-    // setFlag(true);
     handleCloseModalDel();
   };
 
@@ -145,7 +144,7 @@ const AppGrid = ({
                     </TableCell>
                   ))}
                   <TableCell align="center">
-                    <div>
+                    <div className='buttons-row'>
                       <IconButton
                         aria-label="edit"
                         onClick={(e) =>
