@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import "./Sort.scss";
 
-const Sort = ({ data, setData, characters, setFlag, length }) => {
+const Sort = ({ data, setData, characters, setFlag, length, isChange }) => {
   const [sortItem, setSortItem] = useState({
     value: "",
     sort: "asc",
@@ -36,9 +36,7 @@ const Sort = ({ data, setData, characters, setFlag, length }) => {
       }
       setData([...data]);
     }
-  }
-  , [length]
-  );
+  }, [length, isChange]);
 
   const resetSort = (e) => {
     if (e.target.value.length !== 0) {

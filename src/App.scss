@@ -7,8 +7,8 @@ body {
 }
 
 .App-logo {
-  margin: 20px 50px;
-  width: 110px;
+  margin: 0 50px;
+  width: 11vh;
   pointer-events: none;
 }
 
@@ -22,6 +22,11 @@ body {
   font-size: 1.7rem;
   color: rgb(0, 0, 0);
   box-shadow: 0px 7px 19px 0px #4b5e75;
+
+  h1 {
+    margin: 0;
+    font-size: 1.9em;
+  }
 
   div {
     margin: 0 30px;
@@ -37,7 +42,30 @@ body {
   }
 }
 
-.img-start {
-  width: 30%;
-  margin: 0 70px 0 0;
+@media screen and (max-width: 790px) {
+  .App-header {
+    h1 {
+      font-size: 1.4em;
+    }
+
+    div {
+      margin: 0;
+
+      h4 {
+        display: none;
+      }
+    }
+  }
+
+  .App-logo {
+    margin: 0 10px 0 5px;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  .App-header {
+    h1 {
+      font-size: 1em;
+    }
+  }
 }

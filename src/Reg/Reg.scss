@@ -68,3 +68,32 @@ form {
 .reg-form {
   width: 40%;
 }
+
+.img-start {
+  width: 30%;
+  margin-right: 70px;
+}
+
+@media screen and (max-width: 1065px) {
+  .main-reg {
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .main-reg-field {
+    width: 70%;
+    margin-top: 30px;
+  }
+
+  .img-start {
+    margin-top: 20px;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .img-start {
+    width: 50%;
+    margin-top: 20px;
+  }
+}

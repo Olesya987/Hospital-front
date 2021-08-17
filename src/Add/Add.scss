@@ -45,3 +45,37 @@
 .MuiInputBase-input.MuiOutlinedInput-input {
   min-width: 225px;
 }
+
+@media screen and (max-width: 900px) {
+  .formControl1.MuiFormControl-root {
+    min-width: 120px;
+  }
+
+  .MuiInputBase-input.MuiOutlinedInput-input {
+    min-width: 120px;
+  }
+}
+
+@media screen and (max-width: 1145px) {
+  #grid-add {
+    .MuiGrid-root.MuiGrid-item {
+      width: 50%;
+    }
+
+    .MuiGrid-root.MuiGrid-item:last-child {
+      width: auto;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  #grid-add {
+    .MuiGrid-root.MuiGrid-item {
+      width: 100%;
+    }
+
+    .MuiGrid-root.MuiGrid-item:last-child {
+      width: auto;
+    }
+  }
+}
