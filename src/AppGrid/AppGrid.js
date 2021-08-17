@@ -24,7 +24,8 @@ const AppGrid = ({
   characters,
   setCharacters,
   setLength,
-  length,
+  setChange,
+  isChange,
 }) => {
   const [delProps, setDelProps] = useState({
     open: false,
@@ -70,9 +71,9 @@ const AppGrid = ({
               }
             }
           }
+          setFlag(false);
           setCharacters(arr);
           setData(res.data.appointments);
-          setFlag(false);
           setLength(data.length);
         });
     }
@@ -80,8 +81,8 @@ const AppGrid = ({
 
   const handleSaveChangesModalEdit = (data) => {
     setData(data);
-    setFlag(true);
     handleCloseModalEdit();
+    setChange(!isChange);
   };
 
   const handleCloseModalEdit = () => {
@@ -144,7 +145,7 @@ const AppGrid = ({
                     </TableCell>
                   ))}
                   <TableCell align="center">
-                    <div className='buttons-row'>
+                    <div className="buttons-row">
                       <IconButton
                         aria-label="edit"
                         onClick={(e) =>

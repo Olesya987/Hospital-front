@@ -10,6 +10,7 @@ const Appointments = ({ setAuthReg }) => {
   const [length, setLength] = useState(data.length);
   const [characters, setCharacters] = useState([]);
   const [flag, setFlag] = useState(true);
+  const [isChange, setChange] = useState(false);
 
   useEffect(() => {
     const login = localStorage.getItem("login");
@@ -25,6 +26,7 @@ const Appointments = ({ setAuthReg }) => {
         characters={characters}
         setFlag={setFlag}
         length={length}
+        isChange={isChange}
       />
       <Filter
         data={data}
@@ -41,6 +43,8 @@ const Appointments = ({ setAuthReg }) => {
         characters={characters}
         setCharacters={setCharacters}
         setLength={setLength}
+        setChange={setChange}
+        isChange={isChange}
       />
     </div>
   );
