@@ -12,15 +12,15 @@ import "./Sort.scss";
 const Sort = ({
   setData,
   characters,
-  setFlag,
+  reFlag,
   isChange,
   currentPage,
   rowsOnPage,
+  setAllRows,
+  sortItem,
+  setSortItem,
+  date,
 }) => {
-  const [sortItem, setSortItem] = useState({
-    value: "",
-    sort: "asc",
-  });
   const sortDirection = ["asc", "desc"];
 
   useEffect(() => {
@@ -28,16 +28,21 @@ const Sort = ({
       const token = localStorage.getItem("token");
       axios
         .post(
-          `http://localhost:8080/appointment/sort/${currentPage}/${rowsOnPage}`,
+          `http://localhost:8080/appointment/get/${currentPage}/${rowsOnPage}`,
           {
             value: sortItem.value,
-            direction: sortItem.sort === "asc" ? 1 : -1,
+            direction: sortItem.sort,
+            before: date.before,
+            after: date.after,
           },
           {
             headers: { authorization: token },
           }
         )
-        .then((res) => setData(res.data.appointments));
+        .then((res) => {
+          setData(res.data.appointments);
+          setAllRows(res.data.allRows);
+        });
     }
   }, [isChange]);
 
@@ -46,10 +51,12 @@ const Sort = ({
       const token = localStorage.getItem("token");
       axios
         .post(
-          `http://localhost:8080/appointment/sort/${currentPage}/${rowsOnPage}`,
+          `http://localhost:8080/appointment/get/${currentPage}/${rowsOnPage}`,
           {
             value: e.target.value,
-            direction: sortItem.sort === "asc" ? 1 : -1,
+            direction: sortItem.sort,
+            before: date.before,
+            after: date.after,
           },
           {
             headers: { authorization: token },
@@ -57,7 +64,7 @@ const Sort = ({
         )
         .then((res) => setData(res.data.appointments));
     } else {
-      setFlag(true);
+      reFlag();
     }
     setSortItem({ value: e.target.value, sort: "asc" });
   };
@@ -68,10 +75,12 @@ const Sort = ({
       const token = localStorage.getItem("token");
       axios
         .post(
-          `http://localhost:8080/appointment/sort/${currentPage}/${rowsOnPage}`,
+          `http://localhost:8080/appointment/get/${currentPage}/${rowsOnPage}`,
           {
             value: sortItem.value,
-            direction: e.target.value === "asc" ? 1 : -1,
+            direction: e.target.value,
+            before: date.before,
+            after: date.after,
           },
           {
             headers: { authorization: token },
@@ -80,7 +89,7 @@ const Sort = ({
         .then((res) => setData(res.data.appointments));
     } else {
       setSortItem({ value: "", sort: "asc" });
-      setFlag(true);
+      reFlag();
     }
   };
 

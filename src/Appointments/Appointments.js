@@ -7,13 +7,45 @@ import "./Appointments.scss";
 
 const Appointments = ({ setAuthReg }) => {
   const [data, setData] = useState([]);
-  const [length, setLength] = useState(data.length);
   const [characters, setCharacters] = useState([]);
   const [flag, setFlag] = useState(true);
   const [isChange, setChange] = useState(false);
-  const [allRows, setAllRows] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsOnPage, setRowsOnPage] = useState(5);
+  const [allRows, setAllRows] = useState(0);
+  const [date, setDate] = useState({
+    before: "0000-00-00",
+    after: "9999-99-99",
+  });
+  const [sortItem, setSortItem] = useState({
+    value: "",
+    sort: "asc",
+  });
+
+  const reFlag = () => setFlag(!flag);
+
+  const reChange = () => setChange(!isChange);
+
+  const props = {
+    setData,
+    data,
+    reFlag,
+    flag,
+    characters,
+    setCharacters,
+    reChange,
+    isChange,
+    currentPage,
+    setCurrentPage,
+    rowsOnPage,
+    setRowsOnPage,
+    allRows,
+    setAllRows,
+    date,
+    setDate,
+    sortItem,
+    setSortItem
+  };
 
   useEffect(() => {
     const login = localStorage.getItem("login");
@@ -23,40 +55,9 @@ const Appointments = ({ setAuthReg }) => {
   return (
     <div className="appoint-main">
       <Add setFlag={setFlag} flag={flag} />
-      <Sort
-        setData={setData}
-        characters={characters}
-        setFlag={setFlag}
-        isChange={isChange}
-        currentPage={currentPage}
-        rowsOnPage={rowsOnPage}
-      />
-      <Filter
-        data={data}
-        setData={setData}
-        setFlag={setFlag}
-        setLength={setLength}
-        length={length}
-        allRows={allRows}
-        currentPage={currentPage}
-        rowsOnPage={rowsOnPage}
-      />
-      <AppGrid
-        setData={setData}
-        data={data}
-        setFlag={setFlag}
-        flag={flag}
-        characters={characters}
-        setCharacters={setCharacters}
-        setChange={setChange}
-        isChange={isChange}
-        allRows={allRows}
-        setAllRows={setAllRows}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        rowsOnPage={rowsOnPage}
-        setRowsOnPage={setRowsOnPage}
-      />
+      <Sort {...props} />
+      <Filter {...props} />
+      <AppGrid {...props} />
     </div>
   );
 };

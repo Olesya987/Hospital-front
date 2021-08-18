@@ -20,18 +20,17 @@ import "./AppGrid.scss";
 const AppGrid = ({
   setData,
   data,
-  setFlag,
   flag,
   characters,
   setCharacters,
-  setChange,
-  isChange,
-  allRows,
-  setAllRows,
+  reChange,
+  reFlag,
   currentPage,
   setCurrentPage,
   rowsOnPage,
   setRowsOnPage,
+  allRows,
+  setAllRows,
 }) => {
   const [delProps, setDelProps] = useState({
     open: false,
@@ -45,8 +44,9 @@ const AppGrid = ({
   useEffect(() => {
     const token = localStorage.getItem("token");
     axios
-      .get(
+      .post(
         `http://localhost:8080/appointment/get/${currentPage}/${rowsOnPage}`,
+        {},
         {
           headers: { authorization: token },
         }
@@ -82,12 +82,12 @@ const AppGrid = ({
         setCharacters(arr);
         setData(res.data.appointments);
         setAllRows(res.data.allRows);
-        setChange(!isChange);
+        reChange();
       });
-  }, [currentPage, rowsOnPage, flag]);
+  }, [flag]);
 
   const handleSaveChangesModalEdit = (data) => {
-    setFlag(!flag);
+    reFlag();
     handleCloseModalEdit();
   };
 
@@ -99,7 +99,7 @@ const AppGrid = ({
   };
 
   const handleSaveChangesModalDel = (data) => {
-    setFlag(!flag);
+    reFlag();
     handleCloseModalDel();
   };
 
@@ -112,9 +112,12 @@ const AppGrid = ({
 
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage + 1);
+    reFlag();
   };
+
   const handleChangeRowsPerPage = (event) => {
     setRowsOnPage(parseInt(event.target.value, 10));
+    reFlag();
   };
 
   return (

@@ -45,13 +45,13 @@
 
 @media screen and (max-width: 1290px) {
   .container-grid {
-    max-height: 420px;
+    max-height: 400px;
   }
 }
 
 @media screen and (max-width: 1145px) {
   .container-grid {
-    max-height: 350px;
+    max-height: 300px;
   }
 }
 
@@ -99,5 +99,27 @@
 
   .MuiTableCell-root.MuiTableCell-body:last-child {
     border-bottom: 1px solid rgba(224, 224, 224, 1);
+  }
+}
+
+@media screen and (max-width: 460px) {
+  .MuiToolbar-root.MuiToolbar-regular.MuiTablePagination-toolbar.MuiToolbar-gutters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+  }
+
+  .MuiTablePagination-actions {
+    margin: 0;
+  }
+
+  .MuiTypography-body2 {
+    flex: 0 0 35%;
+  }
+
+  .MuiTablePagination-input {
+    flex: 0 0 25%;
   }
 }

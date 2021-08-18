@@ -1,27 +1,53 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Grid, TextField, IconButton } from "@material-ui/core";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import DeleteIcon from "@material-ui/icons/Delete";
 import "./Filter.scss";
 
-const Filter = ({ data, setData, setFlag, setLength, length }) => {
+const Filter = ({
+  setData,
+  reFlag,
+  isChange,
+  currentPage,
+  setCurrentPage,
+  rowsOnPage,
+  setAllRows,
+  date,
+  setDate,
+  sortItem,
+}) => {
   const [addFilter, setFilter] = useState(false);
-  const [date, setDate] = useState({
-    before: "0000-00-00",
-    after: "9999-99-99",
-  });
+  const [isFilter, setIsFilter] = useState(false);
 
   useEffect(() => {
-    filterDate();
-  }, [length]);
+    isFilter && filterDate();
+  }, [isChange]);
 
   const filterDate = () => {
-    data = data.filter(
-      (elem) => elem.date <= date.after && elem.date >= date.before
-    );
-    setData([...data]);
-    setLength(data.length);
+    const token = localStorage.getItem("token");
+    axios
+      .post(
+        `http://localhost:8080/appointment/get/${currentPage}/${rowsOnPage}`,
+        {
+          before: date.before,
+          after: date.after,
+          value: sortItem.value,
+          direction: sortItem.sort,
+        },
+        {
+          headers: { authorization: token },
+        }
+      )
+      .then((res) => {
+        setData(res.data.appointments);
+        setAllRows(res.data.allRows);
+        if (currentPage > Math.ceil(res.data.allRows / rowsOnPage)) {
+          setCurrentPage(1);
+          reFlag();
+        }
+      });
   };
 
   const clearDate = () => {
@@ -29,13 +55,14 @@ const Filter = ({ data, setData, setFlag, setLength, length }) => {
       before: "0000-00-00",
       after: "9999-99-99",
     });
+    setIsFilter(false);
     setFilter(false);
-    setFlag(true);
+    reFlag();
   };
 
   const reFilter = () => {
-    setFlag(true);
-    filterDate();
+    setIsFilter(true);
+    reFlag();
   };
 
   return (
