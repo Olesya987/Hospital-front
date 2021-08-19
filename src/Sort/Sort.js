@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import {
   Grid,
   FormControl,
@@ -10,87 +9,25 @@ import {
 import "./Sort.scss";
 
 const Sort = ({
-  setData,
   characters,
   reFlag,
-  isChange,
-  currentPage,
-  rowsOnPage,
-  setAllRows,
   sortItem,
   setSortItem,
-  date,
 }) => {
   const sortDirection = ["asc", "desc"];
 
-  useEffect(() => {
-    if (sortItem.value !== "") {
-      const token = localStorage.getItem("token");
-      axios
-        .post(
-          `http://localhost:8080/appointment/get/${currentPage}/${rowsOnPage}`,
-          {
-            value: sortItem.value,
-            direction: sortItem.sort,
-            before: date.before,
-            after: date.after,
-          },
-          {
-            headers: { authorization: token },
-          }
-        )
-        .then((res) => {
-          setData(res.data.appointments);
-          setAllRows(res.data.allRows);
-        });
-    }
-  }, [isChange]);
-
   const resetSort = (e) => {
-    if (e.target.value.length !== 0) {
-      const token = localStorage.getItem("token");
-      axios
-        .post(
-          `http://localhost:8080/appointment/get/${currentPage}/${rowsOnPage}`,
-          {
-            value: e.target.value,
-            direction: sortItem.sort,
-            before: date.before,
-            after: date.after,
-          },
-          {
-            headers: { authorization: token },
-          }
-        )
-        .then((res) => setData(res.data.appointments));
-    } else {
-      reFlag();
-    }
-    setSortItem({ value: e.target.value, sort: "asc" });
+    setSortItem({ value: e.target.value, direction: "asc" });
+    reFlag();
   };
 
   const resetDirection = (e) => {
     if (e.target.value.length !== 0) {
-      setSortItem({ ...sortItem, sort: e.target.value });
-      const token = localStorage.getItem("token");
-      axios
-        .post(
-          `http://localhost:8080/appointment/get/${currentPage}/${rowsOnPage}`,
-          {
-            value: sortItem.value,
-            direction: e.target.value,
-            before: date.before,
-            after: date.after,
-          },
-          {
-            headers: { authorization: token },
-          }
-        )
-        .then((res) => setData(res.data.appointments));
+      setSortItem({ ...sortItem, direction: e.target.value });
     } else {
-      setSortItem({ value: "", sort: "asc" });
-      reFlag();
+      setSortItem({ value: "", direction: "asc" });
     }
+    reFlag();
   };
 
   return (
@@ -135,7 +72,7 @@ const Sort = ({
                     labelId="demo-simple-select-outlined-label2"
                     id="input-sort2"
                     name="input-sort2"
-                    value={sortItem.sort}
+                    value={sortItem.direction}
                     onChange={(e) => resetDirection(e)}
                     label="Сортировка по:"
                   >

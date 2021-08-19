@@ -1,68 +1,50 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Grid, TextField, IconButton } from "@material-ui/core";
+import React, { useState } from "react";
+import { Grid, TextField, IconButton, Snackbar } from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import DeleteIcon from "@material-ui/icons/Delete";
+import CloseIcon from "@material-ui/icons/Close";
 import "./Filter.scss";
 
-const Filter = ({
-  setData,
-  reFlag,
-  isChange,
-  currentPage,
-  setCurrentPage,
-  rowsOnPage,
-  setAllRows,
-  date,
-  setDate,
-  sortItem,
-}) => {
+const Filter = ({ reFlag, date, setDate, setIsFilter }) => {
   const [addFilter, setFilter] = useState(false);
-  const [isFilter, setIsFilter] = useState(false);
-
-  useEffect(() => {
-    isFilter && filterDate();
-  }, [isChange]);
-
-  const filterDate = () => {
-    const token = localStorage.getItem("token");
-    axios
-      .post(
-        `http://localhost:8080/appointment/get/${currentPage}/${rowsOnPage}`,
-        {
-          before: date.before,
-          after: date.after,
-          value: sortItem.value,
-          direction: sortItem.sort,
-        },
-        {
-          headers: { authorization: token },
-        }
-      )
-      .then((res) => {
-        setData(res.data.appointments);
-        setAllRows(res.data.allRows);
-        if (currentPage > Math.ceil(res.data.allRows / rowsOnPage)) {
-          setCurrentPage(1);
-          reFlag();
-        }
-      });
-  };
+  const [state, setState] = useState({
+    open: false,
+    text: "",
+  });
 
   const clearDate = () => {
     setDate({
       before: "0000-00-00",
       after: "9999-99-99",
     });
-    setIsFilter(false);
     setFilter(false);
     reFlag();
   };
 
   const reFilter = () => {
-    setIsFilter(true);
-    reFlag();
+    if (date.before <= date.after) {
+      setIsFilter(true);
+      reFlag();
+    } else {
+      setState({
+        open: true,
+        text: "Заданный временной промежуток не корректен",
+      });
+      setIsFilter(false);
+    }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setState({
+      open: false,
+      text: "",
+    });
   };
 
   return (
@@ -140,6 +122,30 @@ const Filter = ({
           </Grid>
         )}
       </Grid>
+      <Snackbar
+        open={state.open}
+        autoHideDuration={13000}
+        onClose={() => handleClose()}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        enqueueSnackbar="errorFilter"
+        action={
+          <React.Fragment>
+            <CloseIcon color="secondary" onClick={() => handleClose()} />
+          </React.Fragment>
+        }
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={() => handleClose()}
+          severity="error"
+        >
+          {state.text}
+        </MuiAlert>
+      </Snackbar>
     </Grid>
   );
 };

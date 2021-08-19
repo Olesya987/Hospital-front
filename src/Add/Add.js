@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import "./Add.scss";
 
-const Add = ({ setFlag, flag }) => {
+const Add = ({ reFlag }) => {
   const [require, setRequire] = useState({
     name: "",
     docName: "",
@@ -51,7 +51,7 @@ const Add = ({ setFlag, flag }) => {
           date: "",
           complaints: "",
         });
-        setFlag(!flag);
+        reFlag();
       });
   };
 
