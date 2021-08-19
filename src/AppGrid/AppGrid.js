@@ -1,36 +1,30 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
-  Paper,
-  IconButton,
-} from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import { TablePagination } from "@material-ui/core";
 import ModalDel from "../ModalDel/ModalDel";
 import ModalEdit from "../ModalEdit/ModalEdit";
+import Sort from "../Sort/Sort";
+import Filter from "../Filter/Filter";
+import TableApp from "../TableApp/TableApp";
 import "./AppGrid.scss";
 
-const AppGrid = ({
-  setData,
-  data,
-  setFlag,
-  flag,
-  characters,
-  setCharacters,
-  setLength,
-  setChange,
-  isChange,
-}) => {
-  const [allRows, setAllRows] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsOnPage, setRowsOnPage] = useState(5);
+const AppGrid = ({ setData, data, flag, reFlag }) => {
+  const [characters, setCharacters] = useState([]);
+  const [pages, setPages] = useState({
+    currentPage: 1,
+    rowsOnPage: 5,
+    allRows: 0,
+  });
+  const { allRows, rowsOnPage, currentPage } = pages;
+  const [date, setDate] = useState({
+    before: "0000-00-00",
+    after: "9999-99-99",
+  });
+  const [isFilter, setIsFilter] = useState(false);
+  const [sortItem, setSortItem] = useState({
+    value: "",
+    direction: "asc",
+  });
   const [delProps, setDelProps] = useState({
     open: false,
     id: "",
@@ -42,20 +36,33 @@ const AppGrid = ({
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const { before, after } = date;
+    const { value, direction } = sortItem;
     axios
-      .get(
-        `http://localhost:8080/appointment/get/${currentPage}/${rowsOnPage}`,
+      .post(
+        `http://localhost:8080/appointment/get`,
+        isFilter
+          ? {
+              currentPage,
+              rowsOnPage,
+              before,
+              after,
+              value,
+              direction,
+            }
+          : { currentPage, rowsOnPage, value, direction },
         {
           headers: { authorization: token },
         }
       )
       .then((res) => {
-        const temp = res.data.appointments;
+        const { appointments, allRows } = res.data;
         const arr = [];
-        if (temp.length !== 0) {
-          for (let key in temp[0]) {
+        if (appointments.length !== 0) {
+          for (let key in appointments[0]) {
             if (key !== "_id") arr.push({ immediately: key });
           }
+          arr.push({ immediately: "" });
           for (let i = 0; i < arr.length; i++) {
             switch (arr[i].immediately) {
               case "name":
@@ -77,18 +84,22 @@ const AppGrid = ({
             }
           }
         }
-        setFlag(false);
         setCharacters(arr);
-        setData(res.data.appointments);
-        setAllRows(res.data.allRows);
-        setLength(data.length);
+        setData(appointments);
+        setPages({ ...pages, allRows });
+        if (
+          currentPage > Math.ceil(allRows / rowsOnPage) &&
+          !appointments.length
+        ) {
+          setPages({ ...pages, currentPage: 1 });
+          reFlag();
+        }
       });
-  }, [currentPage, rowsOnPage]);
+  }, [flag, isFilter, currentPage, rowsOnPage, sortItem, reFlag]);
 
   const handleSaveChangesModalEdit = (data) => {
-    setData(data);
+    reFlag();
     handleCloseModalEdit();
-    setChange(!isChange);
   };
 
   const handleCloseModalEdit = () => {
@@ -98,8 +109,15 @@ const AppGrid = ({
     });
   };
 
+  const changeEditProps = (flag, changeRow) => {
+    setEditProps({
+      open: flag,
+      changeRow,
+    });
+  };
+
   const handleSaveChangesModalDel = (data) => {
-    setData(data);
+    reFlag();
     handleCloseModalDel();
   };
 
@@ -110,104 +128,101 @@ const AppGrid = ({
     });
   };
 
-  const handleChangePage = (event, newPage) => setCurrentPage(newPage + 1);
-  const handleChangeRowsPerPage = (event) =>
-    setRowsOnPage(parseInt(event.target.value, 10));
+  const changeDelProps = (flag, id) => {
+    setDelProps({
+      open: flag,
+      id,
+    });
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPages({ ...pages, currentPage: newPage + 1 });
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPages({ ...pages, rowsOnPage: parseInt(event.target.value, 10) });
+  };
+
+  const resetSort = (e, name) => {
+    if (name === "direction") {
+      if (e.target.value.length !== 0) {
+        setSortItem({ ...sortItem, [name]: e.target.value });
+      } else {
+        setSortItem({ value: "", [name]: "asc" });
+      }
+    } else {
+      setSortItem({ [name]: e.target.value, direction: "asc" });
+    }
+    reFlag();
+  };
+
+  const resetFilter = (e, name) => {
+    if (e.target.value) {
+      setDate({ ...date, [name]: e.target.value });
+    } else {
+      name === "before"
+        ? setDate({ ...date, [name]: "0000-00-00" })
+        : name === "after" && setDate({ ...date, [name]: "9999-99-99" });
+    }
+  };
+
+  const filterCheck = () => {
+    const flag = date.before <= date.after;
+    setIsFilter(flag);
+    flag && reFlag();
+    return flag;
+  };
+
+  const cleaning = () => {
+    setDate({
+      before: "0000-00-00",
+      after: "9999-99-99",
+    });
+    reFlag();
+  };
 
   return (
-    <div className="main-table">
-      <div className="table-size">
-        <TableContainer component={Paper} className="container-grid">
-          <Table
-            className="table"
-            size="small"
-            stickyHeader
-            aria-label="a dense table"
-          >
-            <TableHead>
-              <TableRow>
-                {characters.length !== 0 ? (
-                  characters.map((value, index) => (
-                    <TableCell key={index} align="center" className="titles">
-                      <h2>{value.translate}</h2>
-                    </TableCell>
-                  ))
-                ) : (
-                  <TableCell className="center-text">
-                    <h2>Приёмов нет</h2>
-                  </TableCell>
-                )}
-                {characters.length !== 0 && <TableCell> </TableCell>}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((row) => (
-                <TableRow hover key={row._id}>
-                  {characters.map((name, index) => (
-                    <TableCell
-                      className="text-wrap"
-                      key={index}
-                      align="center"
-                      component="th"
-                      scope="row"
-                    >
-                      {row[name.immediately]}
-                    </TableCell>
-                  ))}
-                  <TableCell align="center">
-                    <div className="buttons-row">
-                      <IconButton
-                        aria-label="edit"
-                        onClick={(e) =>
-                          setEditProps({
-                            ...editProps,
-                            open: true,
-                            changeRow: row,
-                          })
-                        }
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        aria-label="delete"
-                        onClick={(e) =>
-                          setDelProps({ ...delProps, open: true, id: row._id })
-                        }
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 15]}
-          component="div"
-          count={allRows}
-          rowsPerPage={rowsOnPage}
-          page={currentPage - 1}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+    <div>
+      <Sort characters={characters} sortItem={sortItem} resetSort={resetSort} />
+      <Filter
+        date={date}
+        resetFilter={resetFilter}
+        filterCheck={filterCheck}
+        cleaning={cleaning}
+      />
+      <div className="main-table">
+        <div className="table-size">
+          <TableApp
+            data={data}
+            characters={characters}
+            changeDelProps={changeDelProps}
+            changeEditProps={changeEditProps}
+          />
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 15]}
+            component="div"
+            count={allRows}
+            rowsPerPage={rowsOnPage}
+            page={currentPage - 1}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </div>
+        {delProps.open && (
+          <ModalDel
+            {...delProps}
+            onCloseModalDel={handleCloseModalDel}
+            onSaveChangesModal={handleSaveChangesModalDel}
+          />
+        )}
+        {editProps.open && (
+          <ModalEdit
+            {...editProps}
+            onCloseModalEdit={handleCloseModalEdit}
+            onSaveChangesModal={handleSaveChangesModalEdit}
+          />
+        )}
       </div>
-      {delProps.open && (
-        <ModalDel
-          {...delProps}
-          onCloseModalDel={handleCloseModalDel}
-          onSaveChangesModal={handleSaveChangesModalDel}
-          setLength={setLength}
-        />
-      )}
-      {editProps.open && (
-        <ModalEdit
-          {...editProps}
-          onCloseModalEdit={handleCloseModalEdit}
-          onSaveChangesModal={handleSaveChangesModalEdit}
-        />
-      )}
     </div>
   );
 };

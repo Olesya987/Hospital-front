@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  overflow: hidden;
 }
 
 body {
@@ -50,10 +51,6 @@ body {
 
     div {
       margin: 0;
-
-      h4 {
-        display: none;
-      }
     }
   }
 
@@ -62,10 +59,16 @@ body {
   }
 }
 
-@media screen and (max-width: 550px) {
+@media screen and (max-width: 530px) {
   .App-header {
     h1 {
       font-size: 1em;
+    }
+
+    div {
+      h4 {
+        display: none;
+      }
     }
   }
 }

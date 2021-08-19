@@ -34,7 +34,7 @@ const Reg = ({ setAuthReg }) => {
 
   useEffect(() => {
     setAuthReg({ text: "Зарегистрироваться в системе", login: "" });
-  }, []);
+  }, [setAuthReg]);
 
   const checkPass = () => {
     const regexp = /((?=.*[0-9])(?=.*[a-zA-Z]).{6,})/g;

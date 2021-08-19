@@ -88,6 +88,13 @@ form {
 
   .img-start {
     margin-top: 20px;
+    margin-right: 0;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .img-start {
+    width: 40%;
   }
 }
 
@@ -98,6 +105,5 @@ form {
 
   .img-start {
     width: 50%;
-    margin-top: 20px;
   }
 }

@@ -38,7 +38,7 @@ const ModalEdit = ({
     if (!changes.name) {
       setChanges(changeRow);
     }
-  }, [changeRow]);
+  }, [changeRow, changes.name]);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {

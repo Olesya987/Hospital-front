@@ -1,41 +1,31 @@
-import React, { useState, useEffect } from "react";
-import { Grid, TextField, IconButton } from "@material-ui/core";
+import React, { useState } from "react";
+import { Grid, TextField, IconButton, Snackbar } from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import DeleteIcon from "@material-ui/icons/Delete";
+import CloseIcon from "@material-ui/icons/Close";
 import "./Filter.scss";
 
-const Filter = ({ data, setData, setFlag, setLength, length }) => {
+const Filter = ({ date, resetFilter, filterCheck, cleaning }) => {
   const [addFilter, setFilter] = useState(false);
-  const [date, setDate] = useState({
-    before: "0000-00-00",
-    after: "9999-99-99",
-  });
-
-  useEffect(() => {
-    filterDate();
-  }, [length]);
-
-  const filterDate = () => {
-    data = data.filter(
-      (elem) => elem.date <= date.after && elem.date >= date.before
-    );
-    setData([...data]);
-    setLength(data.length);
-  };
+  const [state, setState] = useState(false);
 
   const clearDate = () => {
-    setDate({
-      before: "0000-00-00",
-      after: "9999-99-99",
-    });
+    cleaning();
     setFilter(false);
-    setFlag(true);
   };
 
   const reFilter = () => {
-    setFlag(true);
-    filterDate();
+    !filterCheck() && setState(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setState(false);
   };
 
   return (
@@ -77,9 +67,7 @@ const Filter = ({ data, setData, setFlag, setLength, length }) => {
                     shrink: true,
                   }}
                   value={date.before}
-                  onChange={(e) =>
-                    setDate({ ...date, before: e.target.value || "0000-00-00" })
-                  }
+                  onChange={(e) => resetFilter(e, "before")}
                 />
               </div>
             </Grid>
@@ -96,9 +84,7 @@ const Filter = ({ data, setData, setFlag, setLength, length }) => {
                     shrink: true,
                   }}
                   value={date.after}
-                  onChange={(e) =>
-                    setDate({ ...date, after: e.target.value || "9999-99-99" })
-                  }
+                  onChange={(e) => resetFilter(e, "after")}
                 />
               </div>
             </Grid>
@@ -113,6 +99,30 @@ const Filter = ({ data, setData, setFlag, setLength, length }) => {
           </Grid>
         )}
       </Grid>
+      <Snackbar
+        open={state}
+        autoHideDuration={13000}
+        onClose={() => handleClose()}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        enqueueSnackbar="errorFilter"
+        action={
+          <React.Fragment>
+            <CloseIcon color="secondary" onClick={() => handleClose()} />
+          </React.Fragment>
+        }
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={() => handleClose()}
+          severity="error"
+        >
+          Заданный временной промежуток не корректен
+        </MuiAlert>
+      </Snackbar>
     </Grid>
   );
 };

@@ -1,51 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Add from "../Add/Add";
 import AppGrid from "../AppGrid/AppGrid";
-import Sort from "../Sort/Sort";
-import Filter from "../Filter/Filter";
 import "./Appointments.scss";
 
 const Appointments = ({ setAuthReg }) => {
   const [data, setData] = useState([]);
-  const [length, setLength] = useState(data.length);
-  const [characters, setCharacters] = useState([]);
   const [flag, setFlag] = useState(true);
-  const [isChange, setChange] = useState(false);
+
+  const reFlag = useCallback(() => setFlag(!flag), [flag]);
+
+  const props = {
+    setData,
+    data,
+    reFlag,
+    flag,
+  };
 
   useEffect(() => {
     const login = localStorage.getItem("login");
     setAuthReg({ text: "Приемы", login });
-  }, []);
+  }, [setAuthReg]);
 
   return (
     <div className="appoint-main">
-      <Add setData={setData} setFlag={setFlag} setLength={setLength} />
-      <Sort
-        data={data}
-        setData={setData}
-        characters={characters}
-        setFlag={setFlag}
-        length={length}
-        isChange={isChange}
-      />
-      <Filter
-        data={data}
-        setData={setData}
-        setFlag={setFlag}
-        setLength={setLength}
-        length={length}
-      />
-      <AppGrid
-        setData={setData}
-        data={data}
-        setFlag={setFlag}
-        flag={flag}
-        characters={characters}
-        setCharacters={setCharacters}
-        setLength={setLength}
-        setChange={setChange}
-        isChange={isChange}
-      />
+      <Add reFlag={reFlag} />
+      <AppGrid {...props} />
     </div>
   );
 };

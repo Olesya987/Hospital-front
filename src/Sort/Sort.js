@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Grid,
   FormControl,
@@ -8,78 +8,8 @@ import {
 } from "@material-ui/core";
 import "./Sort.scss";
 
-const Sort = ({ data, setData, characters, setFlag, length, isChange }) => {
-  const [sortItem, setSortItem] = useState({
-    value: "",
-    sort: "asc",
-  });
+const Sort = ({ characters, sortItem, resetSort }) => {
   const sortDirection = ["asc", "desc"];
-
-  useEffect(() => {
-    if (sortItem.value !== "") {
-      if (sortItem.sort === "desc") {
-        data.sort((a, b) =>
-          a[sortItem.value] > b[sortItem.value]
-            ? -1
-            : a[sortItem.value] < b[sortItem.value]
-            ? 1
-            : 0
-        );
-      } else {
-        data.sort((a, b) =>
-          a[sortItem.value] < b[sortItem.value]
-            ? -1
-            : a[sortItem.value] > b[sortItem.value]
-            ? 1
-            : 0
-        );
-      }
-      setData([...data]);
-    }
-  }, [length, isChange]);
-
-  const resetSort = (e) => {
-    if (e.target.value.length !== 0) {
-      data.sort((a, b) =>
-        a[e.target.value] < b[e.target.value]
-          ? -1
-          : a[e.target.value] > b[e.target.value]
-          ? 1
-          : 0
-      );
-      setData([...data]);
-    } else {
-      setFlag(true);
-    }
-    setSortItem({ value: e.target.value, sort: "asc" });
-  };
-
-  const resetDirection = (e) => {
-    if (e.target.value.length !== 0) {
-      setSortItem({ ...sortItem, sort: e.target.value });
-      if (e.target.value === "desc") {
-        data.sort((a, b) =>
-          a[sortItem.value] > b[sortItem.value]
-            ? -1
-            : a[sortItem.value] < b[sortItem.value]
-            ? 1
-            : 0
-        );
-      } else {
-        data.sort((a, b) =>
-          a[sortItem.value] < b[sortItem.value]
-            ? -1
-            : a[sortItem.value] > b[sortItem.value]
-            ? 1
-            : 0
-        );
-      }
-      setData([...data]);
-    } else {
-      setSortItem({ value: "", sort: "asc" });
-      setFlag(true);
-    }
-  };
 
   return (
     <Grid container className="root" spacing={1}>
@@ -96,7 +26,7 @@ const Sort = ({ data, setData, characters, setFlag, length, isChange }) => {
                   id="input-sort1"
                   name="input-sort1"
                   value={sortItem.value}
-                  onChange={(e) => resetSort(e)}
+                  onChange={(e) => resetSort(e, "value")}
                   label="Сортировка по:"
                 >
                   <MenuItem value="">
@@ -123,8 +53,8 @@ const Sort = ({ data, setData, characters, setFlag, length, isChange }) => {
                     labelId="demo-simple-select-outlined-label2"
                     id="input-sort2"
                     name="input-sort2"
-                    value={sortItem.sort}
-                    onChange={(e) => resetDirection(e)}
+                    value={sortItem.direction}
+                    onChange={(e) => resetSort(e, "direction")}
                     label="Сортировка по:"
                   >
                     <MenuItem value="">
