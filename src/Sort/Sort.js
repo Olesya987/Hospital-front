@@ -8,27 +8,8 @@ import {
 } from "@material-ui/core";
 import "./Sort.scss";
 
-const Sort = ({
-  characters,
-  reFlag,
-  sortItem,
-  setSortItem,
-}) => {
+const Sort = ({ characters, sortItem, resetSort }) => {
   const sortDirection = ["asc", "desc"];
-
-  const resetSort = (e) => {
-    setSortItem({ value: e.target.value, direction: "asc" });
-    reFlag();
-  };
-
-  const resetDirection = (e) => {
-    if (e.target.value.length !== 0) {
-      setSortItem({ ...sortItem, direction: e.target.value });
-    } else {
-      setSortItem({ value: "", direction: "asc" });
-    }
-    reFlag();
-  };
 
   return (
     <Grid container className="root" spacing={1}>
@@ -45,7 +26,7 @@ const Sort = ({
                   id="input-sort1"
                   name="input-sort1"
                   value={sortItem.value}
-                  onChange={(e) => resetSort(e)}
+                  onChange={(e) => resetSort(e, "value")}
                   label="Сортировка по:"
                 >
                   <MenuItem value="">
@@ -73,7 +54,7 @@ const Sort = ({
                     id="input-sort2"
                     name="input-sort2"
                     value={sortItem.direction}
-                    onChange={(e) => resetDirection(e)}
+                    onChange={(e) => resetSort(e, "direction")}
                     label="Сортировка по:"
                   >
                     <MenuItem value="">

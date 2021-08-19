@@ -7,33 +7,17 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import CloseIcon from "@material-ui/icons/Close";
 import "./Filter.scss";
 
-const Filter = ({ reFlag, date, setDate, setIsFilter }) => {
+const Filter = ({ date, resetFilter, filterCheck, cleaning }) => {
   const [addFilter, setFilter] = useState(false);
-  const [state, setState] = useState({
-    open: false,
-    text: "",
-  });
+  const [state, setState] = useState(false);
 
   const clearDate = () => {
-    setDate({
-      before: "0000-00-00",
-      after: "9999-99-99",
-    });
+    cleaning();
     setFilter(false);
-    reFlag();
   };
 
   const reFilter = () => {
-    if (date.before <= date.after) {
-      setIsFilter(true);
-      reFlag();
-    } else {
-      setState({
-        open: true,
-        text: "Заданный временной промежуток не корректен",
-      });
-      setIsFilter(false);
-    }
+    !filterCheck() && setState(true);
   };
 
   const handleClose = (event, reason) => {
@@ -41,10 +25,7 @@ const Filter = ({ reFlag, date, setDate, setIsFilter }) => {
       return;
     }
 
-    setState({
-      open: false,
-      text: "",
-    });
+    setState(false);
   };
 
   return (
@@ -86,9 +67,7 @@ const Filter = ({ reFlag, date, setDate, setIsFilter }) => {
                     shrink: true,
                   }}
                   value={date.before}
-                  onChange={(e) =>
-                    setDate({ ...date, before: e.target.value || "0000-00-00" })
-                  }
+                  onChange={(e) => resetFilter(e, "before")}
                 />
               </div>
             </Grid>
@@ -105,9 +84,7 @@ const Filter = ({ reFlag, date, setDate, setIsFilter }) => {
                     shrink: true,
                   }}
                   value={date.after}
-                  onChange={(e) =>
-                    setDate({ ...date, after: e.target.value || "9999-99-99" })
-                  }
+                  onChange={(e) => resetFilter(e, "after")}
                 />
               </div>
             </Grid>
@@ -123,7 +100,7 @@ const Filter = ({ reFlag, date, setDate, setIsFilter }) => {
         )}
       </Grid>
       <Snackbar
-        open={state.open}
+        open={state}
         autoHideDuration={13000}
         onClose={() => handleClose()}
         anchorOrigin={{
@@ -143,7 +120,7 @@ const Filter = ({ reFlag, date, setDate, setIsFilter }) => {
           onClose={() => handleClose()}
           severity="error"
         >
-          {state.text}
+          Заданный временной промежуток не корректен
         </MuiAlert>
       </Snackbar>
     </Grid>
