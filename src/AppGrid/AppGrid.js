@@ -38,7 +38,6 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
     const token = localStorage.getItem("token");
     const { before, after } = date;
     const { value, direction } = sortItem;
-    // setCharacters([]);
     axios
       .post(
         `http://localhost:8080/appointment/get`,
@@ -90,7 +89,7 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
         setPages({ ...pages, allRows });
         if (
           currentPage > Math.ceil(allRows / rowsOnPage) &&
-          appointments.length !== 0
+          !appointments.length
         ) {
           setPages({ ...pages, currentPage: 1 });
           reFlag();
