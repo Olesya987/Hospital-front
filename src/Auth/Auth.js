@@ -44,7 +44,7 @@ const Auth = ({ setAuthReg }) => {
 
   useEffect(() => {
     setAuthReg({ text: "Вход в систему", login: "" });
-  }, []);
+  }, [setAuthReg]);
 
   const goToReg = () => {
     setAuthReg({ text: "Зарегистрироваться в системе", login: "" });

@@ -15,6 +15,7 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
     rowsOnPage: 5,
     allRows: 0,
   });
+  const { allRows, rowsOnPage, currentPage } = pages;
   const [date, setDate] = useState({
     before: "0000-00-00",
     after: "9999-99-99",
@@ -37,7 +38,7 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
     const token = localStorage.getItem("token");
     const { before, after } = date;
     const { value, direction } = sortItem;
-    const { currentPage, rowsOnPage } = pages;
+    // setCharacters([]);
     axios
       .post(
         `http://localhost:8080/appointment/get`,
@@ -62,6 +63,7 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
           for (let key in appointments[0]) {
             if (key !== "_id") arr.push({ immediately: key });
           }
+          arr.push({ immediately: "" });
           for (let i = 0; i < arr.length; i++) {
             switch (arr[i].immediately) {
               case "name":
@@ -86,12 +88,15 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
         setCharacters(arr);
         setData(appointments);
         setPages({ ...pages, allRows });
-        if (currentPage > Math.ceil(allRows / rowsOnPage)) {
+        if (
+          currentPage > Math.ceil(allRows / rowsOnPage) &&
+          appointments.length !== 0
+        ) {
           setPages({ ...pages, currentPage: 1 });
           reFlag();
         }
       });
-  }, [flag]);
+  }, [flag, isFilter, currentPage, rowsOnPage, sortItem, reFlag]);
 
   const handleSaveChangesModalEdit = (data) => {
     reFlag();
@@ -133,12 +138,10 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
 
   const handleChangePage = (event, newPage) => {
     setPages({ ...pages, currentPage: newPage + 1 });
-    reFlag();
   };
 
   const handleChangeRowsPerPage = (event) => {
     setPages({ ...pages, rowsOnPage: parseInt(event.target.value, 10) });
-    reFlag();
   };
 
   const resetSort = (e, name) => {
@@ -155,18 +158,20 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
   };
 
   const resetFilter = (e, name) => {
-    setDate({ ...date, [name]: e.target.value });
+    if (e.target.value) {
+      setDate({ ...date, [name]: e.target.value });
+    } else {
+      name === "before"
+        ? setDate({ ...date, [name]: "0000-00-00" })
+        : name === "after" && setDate({ ...date, [name]: "9999-99-99" });
+    }
   };
 
   const filterCheck = () => {
-    if (date.before <= date.after) {
-      setIsFilter(true);
-      reFlag();
-      return true;
-    } else {
-      setIsFilter(false);
-      return false;
-    }
+    const flag = date.before <= date.after;
+    setIsFilter(flag);
+    flag && reFlag();
+    return flag;
   };
 
   const cleaning = () => {
@@ -197,9 +202,9 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 15]}
             component="div"
-            count={pages.allRows}
-            rowsPerPage={pages.rowsOnPage}
-            page={pages.currentPage - 1}
+            count={allRows}
+            rowsPerPage={rowsOnPage}
+            page={currentPage - 1}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />

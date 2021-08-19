@@ -14,6 +14,41 @@ import EditIcon from "@material-ui/icons/Edit";
 import "./TableApp.scss";
 
 const TableApp = ({ data, characters, changeDelProps, changeEditProps }) => {
+  const tableCellValues = (name, index) => {
+    return (
+      <TableCell
+        className="text-wrap"
+        key={index}
+        align="center"
+        component="th"
+        scope="row"
+      >
+        {name}
+      </TableCell>
+    );
+  };
+
+  const tableCellButtons = (row, index) => {
+    return (
+      <TableCell align="center" key={index}>
+        <div className="buttons-row">
+          <IconButton
+            aria-label="edit"
+            onClick={(e) => changeEditProps(true, row)}
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton
+            aria-label="delete"
+            onClick={(e) => changeDelProps(true, row._id)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </div>
+      </TableCell>
+    );
+  };
+
   return (
     <TableContainer component={Paper} className="container-grid">
       <Table
@@ -24,10 +59,14 @@ const TableApp = ({ data, characters, changeDelProps, changeEditProps }) => {
       >
         <TableHead>
           <TableRow>
-            {characters ? (
+            {characters.length ? (
               characters.map((value, index) => (
-                <TableCell key={index} align="center" className="titles">
-                  <h2>{value.translate}</h2>
+                <TableCell
+                  key={index}
+                  align="center"
+                  className={value.translate ? "titles" : ""}
+                >
+                  {value.translate && <h2>{value.translate}</h2>}
                 </TableCell>
               ))
             ) : (
@@ -35,40 +74,17 @@ const TableApp = ({ data, characters, changeDelProps, changeEditProps }) => {
                 <h2>Приёмов нет</h2>
               </TableCell>
             )}
-            {characters && <TableCell />}
           </TableRow>
         </TableHead>
         <TableBody>
           {data &&
             data.map((row) => (
               <TableRow hover key={row._id}>
-                {characters.map((name, index) => (
-                  <TableCell
-                    className="text-wrap"
-                    key={index}
-                    align="center"
-                    component="th"
-                    scope="row"
-                  >
-                    {row[name.immediately]}
-                  </TableCell>
-                ))}
-                <TableCell align="center">
-                  <div className="buttons-row">
-                    <IconButton
-                      aria-label="edit"
-                      onClick={(e) => changeEditProps(true, row)}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      aria-label="delete"
-                      onClick={(e) => changeDelProps(true, row._id)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </div>
-                </TableCell>
+                {characters.map((name, index) =>
+                  name.immediately
+                    ? tableCellValues(row[name.immediately], index)
+                    : tableCellButtons(row, index)
+                )}
               </TableRow>
             ))}
         </TableBody>
