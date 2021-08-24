@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { connect } from "react-redux";
 import {
   Dialog,
   DialogActions,
@@ -10,21 +11,36 @@ import {
 } from "@material-ui/core";
 import "./ModalDel.scss";
 
-const ModalDel = ({ open, id, onCloseModalDel, onSaveChangesModal }) => {
+const ModalDel = ({ allState, reFlag, onChangeModal }) => {
   const delFunc = () => {
     const token = localStorage.getItem("token");
     axios
-      .delete(`http://localhost:8080/appointment/del?id=${id}`, {
-        headers: { authorization: token },
-      })
+      .delete(
+        `http://localhost:8080/appointment/del?id=${allState.modalProps.id}`,
+        {
+          headers: { authorization: token },
+        }
+      )
       .then((res) => {
-        onSaveChangesModal(res.data.appointments);
+        onSaveChangesModal();
       });
+  };
+
+  const onSaveChangesModal = () => {
+    reFlag();
+    onCloseModalDel();
+  };
+
+  const onCloseModalDel = () => {
+    onChangeModal({
+      open: false,
+      id: "",
+    });
   };
 
   return (
     <Dialog
-      open={open}
+      open={allState.modalProps.open}
       onClose={() => onCloseModalDel()}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
@@ -56,4 +72,16 @@ const ModalDel = ({ open, id, onCloseModalDel, onSaveChangesModal }) => {
   );
 };
 
-export default ModalDel;
+export default connect(
+  (state) => ({
+    allState: state,
+  }),
+  (dispatch) => ({
+    reFlag: () => {
+      dispatch({ type: "SET_FLAG" });
+    },
+    onChangeModal: (obj) => {
+      dispatch({ type: "SET_ALL_PROPS", newValue: obj });
+    },
+  })
+)(ModalDel);

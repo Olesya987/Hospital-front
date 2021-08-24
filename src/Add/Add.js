@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { connect } from "react-redux";
 import {
   Grid,
   FormControl,
@@ -21,10 +22,10 @@ const Add = ({ reFlag }) => {
 
   const checkFields = () => {
     return (
-      require.name.length !== 0 &&
-      require.docName.length !== 0 &&
-      require.date.length !== 0 &&
-      require.complaints.length !== 0
+      require.name.length &&
+      require.docName.length &&
+      require.date.length &&
+      require.complaints.length
     );
   };
 
@@ -166,4 +167,16 @@ const Add = ({ reFlag }) => {
   );
 };
 
-export default Add;
+export default connect(
+  (state) => ({
+    allState: state,
+  }),
+  (dispatch) => ({
+    onChangeAuthReg: (newObj) => {
+      dispatch({ type: "SET_AUTH_REG", newValue: newObj });
+    },
+    reFlag: () => {
+      dispatch({ type: "SET_FLAG" });
+    },
+  })
+)(Add);

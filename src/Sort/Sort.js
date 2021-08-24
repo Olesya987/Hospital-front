@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import {
   Grid,
   FormControl,
@@ -8,8 +9,13 @@ import {
 } from "@material-ui/core";
 import "./Sort.scss";
 
-const Sort = ({ characters, sortItem, resetSort }) => {
+const Sort = ({ allState, onChangeSort, reFlag }) => {
   const sortDirection = ["asc", "desc"];
+
+  const resetSort = (e, name) => {
+    onChangeSort(e.target.value, name);
+    reFlag();
+  };
 
   return (
     <Grid container className="root" spacing={1}>
@@ -25,15 +31,15 @@ const Sort = ({ characters, sortItem, resetSort }) => {
                   labelId="demo-simple-select-outlined-label"
                   id="input-sort1"
                   name="input-sort1"
-                  value={sortItem.value}
+                  value={allState.sortItem.value}
                   onChange={(e) => resetSort(e, "value")}
                   label="Сортировка по:"
                 >
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  {characters.length !== 0 &&
-                    characters.map((val, index) => (
+                  {allState.characters.length !== 0 &&
+                    allState.characters.map((val, index) => (
                       <MenuItem key={index} value={val.immediately}>
                         {val.translate}
                       </MenuItem>
@@ -42,7 +48,7 @@ const Sort = ({ characters, sortItem, resetSort }) => {
               </FormControl>
             </div>
           </Grid>
-          {sortItem.value !== "" && (
+          {allState.sortItem.value !== "" && (
             <Grid key="fieldSort2" item>
               <div className="auth-div-login">
                 <FormControl variant="outlined" className="formControl">
@@ -53,14 +59,14 @@ const Sort = ({ characters, sortItem, resetSort }) => {
                     labelId="demo-simple-select-outlined-label2"
                     id="input-sort2"
                     name="input-sort2"
-                    value={sortItem.direction}
+                    value={allState.sortItem.direction}
                     onChange={(e) => resetSort(e, "direction")}
                     label="Сортировка по:"
                   >
                     <MenuItem value="">
                       <em>None</em>
                     </MenuItem>
-                    {characters.length !== 0 &&
+                    {allState.characters.length !== 0 &&
                       sortDirection.map((val, index) => (
                         <MenuItem key={index} value={val}>
                           {val}
@@ -77,4 +83,16 @@ const Sort = ({ characters, sortItem, resetSort }) => {
   );
 };
 
-export default Sort;
+export default connect(
+  (state) => ({
+    allState: state,
+  }),
+  (dispatch) => ({
+    reFlag: () => {
+      dispatch({ type: "SET_FLAG" });
+    },
+    onChangeSort: (val, name) => {
+      dispatch({ type: "SET_SORT", newValue: val, name });
+    },
+  })
+)(Sort);

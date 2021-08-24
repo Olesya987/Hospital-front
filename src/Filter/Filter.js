@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import { Grid, TextField, IconButton, Snackbar } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
 import AddBoxIcon from "@material-ui/icons/AddBox";
@@ -7,9 +8,15 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import CloseIcon from "@material-ui/icons/Close";
 import "./Filter.scss";
 
-const Filter = ({ date, resetFilter, filterCheck, cleaning }) => {
+const Filter = ({
+  allState,
+  onChangeOneDate,
+  onChangeAllDate,
+  reFlag,
+  onChangeFilter,
+  onChangeStateWar,
+}) => {
   const [addFilter, setFilter] = useState(false);
-  const [state, setState] = useState(false);
 
   const clearDate = () => {
     cleaning();
@@ -17,7 +24,14 @@ const Filter = ({ date, resetFilter, filterCheck, cleaning }) => {
   };
 
   const reFilter = () => {
-    !filterCheck() && setState(true);
+    !filterCheck() && onChangeStateWar({ open: true });
+  };
+
+  const filterCheck = () => {
+    const flag = allState.date.before <= allState.date.after;
+    onChangeFilter(flag);
+    flag && reFlag();
+    return flag;
   };
 
   const handleClose = (event, reason) => {
@@ -25,7 +39,16 @@ const Filter = ({ date, resetFilter, filterCheck, cleaning }) => {
       return;
     }
 
-    setState(false);
+    onChangeStateWar({ open: false });
+  };
+
+  const cleaning = () => {
+    onChangeAllDate({
+      before: "0000-00-00",
+      after: "9999-99-99",
+    });
+    onChangeFilter(false);
+    reFlag();
   };
 
   return (
@@ -66,8 +89,8 @@ const Filter = ({ date, resetFilter, filterCheck, cleaning }) => {
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  value={date.before}
-                  onChange={(e) => resetFilter(e, "before")}
+                  value={allState.date.before}
+                  onChange={(e) => onChangeOneDate(e.target.value, "before")}
                 />
               </div>
             </Grid>
@@ -83,8 +106,8 @@ const Filter = ({ date, resetFilter, filterCheck, cleaning }) => {
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  value={date.after}
-                  onChange={(e) => resetFilter(e, "after")}
+                  value={allState.date.after}
+                  onChange={(e) => onChangeOneDate(e.target.value, "after")}
                 />
               </div>
             </Grid>
@@ -100,7 +123,7 @@ const Filter = ({ date, resetFilter, filterCheck, cleaning }) => {
         )}
       </Grid>
       <Snackbar
-        open={state}
+        open={allState.state.open}
         autoHideDuration={13000}
         onClose={() => handleClose()}
         anchorOrigin={{
@@ -127,4 +150,28 @@ const Filter = ({ date, resetFilter, filterCheck, cleaning }) => {
   );
 };
 
-export default Filter;
+export default connect(
+  (state) => ({
+    allState: state,
+  }),
+  (dispatch) => ({
+    onChangeAllDate: (newObj) => {
+      dispatch({ type: "SET_DATE", newValue: newObj });
+    },
+    onChangeOneDate: (newObj, name) => {
+      dispatch({ type: "SET_ONE_DATE", newValue: newObj, name });
+    },
+    reFlag: () => {
+      dispatch({ type: "SET_FLAG" });
+    },
+    onChangeData: (arr) => {
+      dispatch({ type: "SET_DATA", newValue: arr });
+    },
+    onChangeFilter: (val) => {
+      dispatch({ type: "SET_FILTER", newValue: val });
+    },
+    onChangeStateWar: (newObj) => {
+      dispatch({ type: "SET_STATE_WAR", newValue: newObj });
+    },
+  })
+)(Filter);

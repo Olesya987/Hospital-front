@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { connect } from "react-redux";
 import { TablePagination } from "@material-ui/core";
 import ModalDel from "../ModalDel/ModalDel";
 import ModalEdit from "../ModalEdit/ModalEdit";
@@ -8,40 +9,27 @@ import Filter from "../Filter/Filter";
 import TableApp from "../TableApp/TableApp";
 import "./AppGrid.scss";
 
-const AppGrid = ({ setData, data, flag, reFlag }) => {
-  const [characters, setCharacters] = useState([]);
+const AppGrid = ({
+  allState,
+  onChangeData,
+  onChangeCharacters,
+  reFlag,
+}) => {
   const [pages, setPages] = useState({
     currentPage: 1,
     rowsOnPage: 5,
     allRows: 0,
   });
   const { allRows, rowsOnPage, currentPage } = pages;
-  const [date, setDate] = useState({
-    before: "0000-00-00",
-    after: "9999-99-99",
-  });
-  const [isFilter, setIsFilter] = useState(false);
-  const [sortItem, setSortItem] = useState({
-    value: "",
-    direction: "asc",
-  });
-  const [delProps, setDelProps] = useState({
-    open: false,
-    id: "",
-  });
-  const [editProps, setEditProps] = useState({
-    open: false,
-    changeRow: {},
-  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const { before, after } = date;
-    const { value, direction } = sortItem;
+    const { before, after } = allState.date;
+    const { value, direction } = allState.sortItem;
     axios
       .post(
         `http://localhost:8080/appointment/get`,
-        isFilter
+        allState.isFilter
           ? {
               currentPage,
               rowsOnPage,
@@ -84,8 +72,8 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
             }
           }
         }
-        setCharacters(arr);
-        setData(appointments);
+        onChangeCharacters(arr);
+        onChangeData(appointments);
         setPages({ ...pages, allRows });
         if (
           currentPage > Math.ceil(allRows / rowsOnPage) &&
@@ -95,45 +83,14 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
           reFlag();
         }
       });
-  }, [flag, isFilter, currentPage, rowsOnPage, sortItem, reFlag]);
-
-  const handleSaveChangesModalEdit = (data) => {
-    reFlag();
-    handleCloseModalEdit();
-  };
-
-  const handleCloseModalEdit = () => {
-    setEditProps({
-      open: false,
-      changeRow: {},
-    });
-  };
-
-  const changeEditProps = (flag, changeRow) => {
-    setEditProps({
-      open: flag,
-      changeRow,
-    });
-  };
-
-  const handleSaveChangesModalDel = (data) => {
-    reFlag();
-    handleCloseModalDel();
-  };
-
-  const handleCloseModalDel = () => {
-    setDelProps({
-      open: false,
-      changeRow: {},
-    });
-  };
-
-  const changeDelProps = (flag, id) => {
-    setDelProps({
-      open: flag,
-      id,
-    });
-  };
+  }, [
+    allState.flag,
+    allState.isFilter,
+    currentPage,
+    rowsOnPage,
+    allState.sortItem,
+    reFlag,
+  ]);
 
   const handleChangePage = (event, newPage) => {
     setPages({ ...pages, currentPage: newPage + 1 });
@@ -143,61 +100,13 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
     setPages({ ...pages, rowsOnPage: parseInt(event.target.value, 10) });
   };
 
-  const resetSort = (e, name) => {
-    if (name === "direction") {
-      if (e.target.value.length !== 0) {
-        setSortItem({ ...sortItem, [name]: e.target.value });
-      } else {
-        setSortItem({ value: "", [name]: "asc" });
-      }
-    } else {
-      setSortItem({ [name]: e.target.value, direction: "asc" });
-    }
-    reFlag();
-  };
-
-  const resetFilter = (e, name) => {
-    if (e.target.value) {
-      setDate({ ...date, [name]: e.target.value });
-    } else {
-      name === "before"
-        ? setDate({ ...date, [name]: "0000-00-00" })
-        : name === "after" && setDate({ ...date, [name]: "9999-99-99" });
-    }
-  };
-
-  const filterCheck = () => {
-    const flag = date.before <= date.after;
-    setIsFilter(flag);
-    flag && reFlag();
-    return flag;
-  };
-
-  const cleaning = () => {
-    setDate({
-      before: "0000-00-00",
-      after: "9999-99-99",
-    });
-    reFlag();
-  };
-
   return (
     <div>
-      <Sort characters={characters} sortItem={sortItem} resetSort={resetSort} />
-      <Filter
-        date={date}
-        resetFilter={resetFilter}
-        filterCheck={filterCheck}
-        cleaning={cleaning}
-      />
+      <Sort />
+      <Filter />
       <div className="main-table">
         <div className="table-size">
-          <TableApp
-            data={data}
-            characters={characters}
-            changeDelProps={changeDelProps}
-            changeEditProps={changeEditProps}
-          />
+          <TableApp />
           <TablePagination
             rowsPerPageOptions={[5, 10, 15]}
             component="div"
@@ -208,23 +117,34 @@ const AppGrid = ({ setData, data, flag, reFlag }) => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </div>
-        {delProps.open && (
-          <ModalDel
-            {...delProps}
-            onCloseModalDel={handleCloseModalDel}
-            onSaveChangesModal={handleSaveChangesModalDel}
-          />
-        )}
-        {editProps.open && (
-          <ModalEdit
-            {...editProps}
-            onCloseModalEdit={handleCloseModalEdit}
-            onSaveChangesModal={handleSaveChangesModalEdit}
-          />
+        {allState.modalProps.id && allState.modalProps.open && <ModalDel />}
+        {allState.modalProps.changeRow && allState.modalProps.open && (
+          <ModalEdit />
         )}
       </div>
     </div>
   );
 };
 
-export default AppGrid;
+export default connect(
+  (state) => ({
+    allState: state,
+  }),
+  (dispatch) => ({
+    onChangeCharacters: (arr) => {
+      dispatch({ type: "SET_CHARACTERS", newValue: arr });
+    },
+    reFlag: () => {
+      dispatch({ type: "SET_FLAG" });
+    },
+    onChangeData: (arr) => {
+      dispatch({ type: "SET_DATA", newValue: arr });
+    },
+    onChangeAllDate: (newObj) => {
+      dispatch({ type: "SET_DATE", newValue: newObj });
+    },
+    onChangeModal: (obj) => {
+      dispatch({ type: "SET_ALL_PROPS", newValue: obj });
+    },
+  })
+)(AppGrid);
