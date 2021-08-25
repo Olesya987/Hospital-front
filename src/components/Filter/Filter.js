@@ -17,6 +17,7 @@ const Filter = ({
   onChangeStateWar,
 }) => {
   const [addFilter, setFilter] = useState(false);
+  const { state, date } = allState;
 
   const clearDate = () => {
     cleaning();
@@ -28,7 +29,7 @@ const Filter = ({
   };
 
   const filterCheck = () => {
-    const flag = allState.date.before <= allState.date.after;
+    const flag = date.before <= date.after;
     onChangeFilter(flag);
     flag && reFlag();
     return flag;
@@ -89,7 +90,7 @@ const Filter = ({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  value={allState.date.before}
+                  value={date.before}
                   onChange={(e) => onChangeOneDate(e.target.value, "before")}
                 />
               </div>
@@ -106,7 +107,7 @@ const Filter = ({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  value={allState.date.after}
+                  value={date.after}
                   onChange={(e) => onChangeOneDate(e.target.value, "after")}
                 />
               </div>
@@ -123,14 +124,13 @@ const Filter = ({
         )}
       </Grid>
       <Snackbar
-        open={allState.state.open}
+        open={state.open}
         autoHideDuration={13000}
         onClose={() => handleClose()}
         anchorOrigin={{
           vertical: "top",
           horizontal: "center",
         }}
-        enqueueSnackbar="errorFilter"
         action={
           <React.Fragment>
             <CloseIcon color="secondary" onClick={() => handleClose()} />

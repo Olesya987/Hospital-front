@@ -11,6 +11,7 @@ import "./Sort.scss";
 
 const Sort = ({ allState, onChangeSort, reFlag }) => {
   const sortDirection = ["asc", "desc"];
+  const { characters, sortItem } = allState;
 
   const resetSort = (e, name) => {
     onChangeSort(e.target.value, name);
@@ -31,15 +32,15 @@ const Sort = ({ allState, onChangeSort, reFlag }) => {
                   labelId="demo-simple-select-outlined-label"
                   id="input-sort1"
                   name="input-sort1"
-                  value={allState.sortItem.value}
+                  value={sortItem.value}
                   onChange={(e) => resetSort(e, "value")}
                   label="Сортировка по:"
                 >
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  {allState.characters.length !== 0 &&
-                    allState.characters.map((val, index) => (
+                  {characters.length !== 0 &&
+                    characters.map((val, index) => (
                       <MenuItem key={index} value={val.immediately}>
                         {val.translate}
                       </MenuItem>
@@ -48,7 +49,7 @@ const Sort = ({ allState, onChangeSort, reFlag }) => {
               </FormControl>
             </div>
           </Grid>
-          {allState.sortItem.value !== "" && (
+          {sortItem.value !== "" && (
             <Grid key="fieldSort2" item>
               <div className="auth-div-login">
                 <FormControl variant="outlined" className="formControl">
@@ -59,14 +60,14 @@ const Sort = ({ allState, onChangeSort, reFlag }) => {
                     labelId="demo-simple-select-outlined-label2"
                     id="input-sort2"
                     name="input-sort2"
-                    value={allState.sortItem.direction}
+                    value={sortItem.direction}
                     onChange={(e) => resetSort(e, "direction")}
                     label="Сортировка по:"
                   >
                     <MenuItem value="">
                       <em>None</em>
                     </MenuItem>
-                    {allState.characters.length !== 0 &&
+                    {characters.length !== 0 &&
                       sortDirection.map((val, index) => (
                         <MenuItem key={index} value={val}>
                           {val}

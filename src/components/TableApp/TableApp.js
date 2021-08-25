@@ -15,6 +15,8 @@ import EditIcon from "@material-ui/icons/Edit";
 import "./TableApp.scss";
 
 const TableApp = ({ allState, onChangeModal }) => {
+  const { data, characters } = allState;
+
   const tableCellValues = (name, index) => {
     return (
       <TableCell
@@ -74,8 +76,8 @@ const TableApp = ({ allState, onChangeModal }) => {
       >
         <TableHead>
           <TableRow>
-            {allState.characters.length ? (
-              allState.characters.map((value, index) => (
+            {characters.length ? (
+              characters.map((value, index) => (
                 <TableCell
                   key={index}
                   align="center"
@@ -92,16 +94,15 @@ const TableApp = ({ allState, onChangeModal }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {allState.data.length &&
-            allState.data.map((row) => (
-              <TableRow hover key={row._id}>
-                {allState.characters.map((name, index) =>
-                  name.immediately
-                    ? tableCellValues(row[name.immediately], index)
-                    : tableCellButtons(row, index)
-                )}
-              </TableRow>
-            ))}
+          {data.map((row) => (
+            <TableRow hover key={row._id}>
+              {characters.map((name, index) =>
+                name.immediately
+                  ? tableCellValues(row[name.immediately], index)
+                  : tableCellButtons(row, index)
+              )}
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>

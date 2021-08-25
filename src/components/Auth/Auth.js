@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { connect } from "react-redux";
@@ -16,56 +16,50 @@ import { Visibility, VisibilityOff } from "@material-ui/icons";
 import MuiAlert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
 import medical from "../source/images/medical-2.png";
-import "./Reg.scss";
+import "./Auth.scss";
 
-const Reg = ({
+const Auth = ({
   allState,
   onChangeAuthReg,
+  onChangeStateWar,
   onChangeValues,
   onChangeOneValue,
-  onChangeStateWar,
 }) => {
+  const { state, values } = allState;
   const history = useHistory();
-
-  useEffect(() => {
-    onChangeAuthReg({ text: "Зарегистрироваться в системе", login: "" });
-  }, []);
-
-  const checkPass = () => {
-    const regexp = /((?=.*[0-9])(?=.*[a-zA-Z]).{6,})/g;
-    return (
-      regexp.test(allState.values.password) &&
-      !/[а-яА-Я]/.test(allState.values.password)
-    );
-  };
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
+
     onChangeStateWar({
       open: false,
       text: "",
     });
   };
 
-  const goToAuth = () => {
+  useEffect(() => {
     onChangeAuthReg({ text: "Вход в систему", login: "" });
-    history.push("/authorization");
+  }, []);
+
+  const goToReg = () => {
+    onChangeAuthReg({ text: "Зарегистрироваться в системе", login: "" });
+    history.push("/registration");
   };
 
-  const subUser = async (e) => {
+  const checkUser = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     if (
-      formData.get("input-login").length >= 6 &&
-      checkPass() &&
-      allState.values.password === allState.values.passwordRepeat
+      formData.get("input-login").length !== 0 &&
+      formData.get("input-password").length !== 0
     ) {
+      const { login, password } = values;
       await axios
-        .post("http://localhost:8080/user/post", {
-          login: formData.get("input-login"),
-          password: formData.get("input-password"),
+        .post("http://localhost:8080/user/get", {
+          login,
+          password,
         })
         .then((res) => {
           const { login, token } = res.data;
@@ -76,42 +70,43 @@ const Reg = ({
             login: "",
             password: "",
             showPassword: false,
-            showPasswordRepeat: false,
-            passwordRepeat: "",
           });
           history.push(`/appointments`);
         })
         .catch((err) => {
-          if (err.response.status === 421) {
-            onChangeStateWar({
-              open: true,
-              text: "Пользователь с таким логином уже зарегистрирован",
-            });
-          }
+          onChangeStateWar({
+            open: true,
+            text:
+              err.response.status === 450
+                ? "Пользователя с таким логином не существует"
+                : err.response.status === 440
+                ? "Введен неверный пароль"
+                : "",
+          });
         });
     } else {
       onChangeStateWar({
         open: true,
-        text: "Вводимые значения некорректны, длина строк должна быть не меньше 6, в пароле должны присутствовать цифры и латинские символы",
+        text: "Вводимые значения некорректны, должны быть заполнены все поля",
       });
     }
   };
 
   return (
-    <div className="main-reg">
+    <div className="main-auth">
       <img className="img-start" src={medical} alt="design" />
-      <div className="main-reg-field">
-        <h2>Регистрация</h2>
-        <form onSubmit={(e) => subUser(e)}>
-          <div className="input-form-reg">
-            <div className="reg-div-login">
+      <div className="main-auth-field">
+        <h2>Войти в систему</h2>
+        <form onSubmit={checkUser}>
+          <div className="input-form-auth">
+            <div className="auth-div-login">
               <TextField
                 id="input-login"
                 name="input-login"
                 label="Login"
                 type="text"
                 variant="outlined"
-                value={allState.values.login}
+                value={values.login}
                 onChange={(e) => onChangeOneValue(e.target.value, "login")}
               />
             </div>
@@ -123,87 +118,43 @@ const Reg = ({
               <OutlinedInput
                 id="input-password"
                 name="input-password"
-                type={allState.values.showPassword ? "text" : "password"}
-                value={allState.values.password}
+                type={values.showPassword ? "text" : "password"}
+                value={values.password}
                 onChange={(e) => onChangeOneValue(e.target.value, "password")}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
                       onClick={() =>
-                        onChangeOneValue(
-                          !allState.values.showPassword,
-                          "showPassword"
-                        )
+                        onChangeOneValue(!values.showPassword, "showPassword")
                       }
                       edge="end"
                     >
-                      {allState.values.showPassword ? (
-                        <Visibility />
-                      ) : (
-                        <VisibilityOff />
-                      )}
+                      {values.showPassword ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
                   </InputAdornment>
                 }
                 labelWidth={70}
               />
             </FormControl>
-
-            <FormControl className="margin textField" variant="outlined">
-              <InputLabel htmlFor="outlined-adornment-password-repeat">
-                Repeat password
-              </InputLabel>
-              <OutlinedInput
-                id="input-password-repeat"
-                name="input-password-repeat"
-                type={allState.values.showPasswordRepeat ? "text" : "password"}
-                value={allState.values.passwordRepeat}
-                onChange={(e) =>
-                  onChangeOneValue(e.target.value, "passwordRepeat")
-                }
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password repeat visibility"
-                      onClick={() =>
-                        onChangeOneValue(
-                          !allState.values.showPasswordRepeat,
-                          "showPasswordRepeat"
-                        )
-                      }
-                      edge="end"
-                    >
-                      {allState.values.showPasswordRepeat ? (
-                        <Visibility />
-                      ) : (
-                        <VisibilityOff />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                labelWidth={128}
-              />
-            </FormControl>
           </div>
 
           <Button variant="outlined" color="primary" type="none">
-            Зарегистрироваться
+            Войти
           </Button>
-          <div className="reg-text" onClick={() => goToAuth()}>
-            Авторизоваться
+          <div className="auth-text" onClick={() => goToReg()}>
+            Зарегистрироваться
           </div>
         </form>
 
         <Snackbar
-          open={allState.state.open}
+          open={state.open}
           autoHideDuration={13000}
           onClose={() => handleClose()}
           anchorOrigin={{
             vertical: "top",
             horizontal: "center",
           }}
-          enqueueSnackbar="error"
           action={
             <React.Fragment>
               <CloseIcon color="secondary" onClick={() => handleClose()} />
@@ -216,7 +167,7 @@ const Reg = ({
             onClose={() => handleClose()}
             severity="error"
           >
-            {allState.state.text}
+            {state.text}
           </MuiAlert>
         </Snackbar>
       </div>
@@ -242,4 +193,4 @@ export default connect(
       dispatch({ type: "SET_VALUE", newValue: val, name });
     },
   })
-)(Reg);
+)(Auth);
