@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import { connect } from "react-redux";
 import {
   IconButton,
   OutlinedInput,
@@ -17,38 +18,32 @@ import CloseIcon from "@material-ui/icons/Close";
 import medical from "../source/images/medical-2.png";
 import "./Auth.scss";
 
-const Auth = ({ setAuthReg }) => {
+const Auth = ({
+  allState,
+  onChangeAuthReg,
+  onChangeStateWar,
+  onChangeValues,
+  onChangeOneValue,
+}) => {
   const history = useHistory();
-
-  const [state, setState] = useState({
-    open: false,
-    text: "",
-  });
-
-  const [values, setValues] = useState({
-    login: "",
-    password: "",
-    showPassword: false,
-  });
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
 
-    setState({
+    onChangeStateWar({
       open: false,
       text: "",
     });
   };
 
   useEffect(() => {
-    setAuthReg({ text: "Вход в систему", login: "" });
-  }, [setAuthReg]);
+    onChangeAuthReg({ text: "Вход в систему", login: "" });
+  }, []);
 
   const goToReg = () => {
-    setAuthReg({ text: "Зарегистрироваться в системе", login: "" });
-
+    onChangeAuthReg({ text: "Зарегистрироваться в системе", login: "" });
     history.push("/registration");
   };
 
@@ -59,7 +54,7 @@ const Auth = ({ setAuthReg }) => {
       formData.get("input-login").length !== 0 &&
       formData.get("input-password").length !== 0
     ) {
-      const { login, password } = values;
+      const { login, password } = allState.values;
       await axios
         .post("http://localhost:8080/user/get", {
           login,
@@ -69,18 +64,16 @@ const Auth = ({ setAuthReg }) => {
           const { login, token } = res.data;
           localStorage.setItem("token", token);
           localStorage.setItem("login", login);
-          setAuthReg({ text: "Приемы", login });
-          setValues({
+          onChangeAuthReg({ text: "Приемы", login });
+          onChangeValues({
             login: "",
             password: "",
             showPassword: false,
-            showPasswordRepeat: false,
-            passwordRepeat: "",
           });
           history.push(`/appointments`);
         })
         .catch((err) => {
-          setState({
+          onChangeStateWar({
             open: true,
             text:
               err.response.status === 450
@@ -91,7 +84,7 @@ const Auth = ({ setAuthReg }) => {
           });
         });
     } else {
-      setState({
+      onChangeStateWar({
         open: true,
         text: "Вводимые значения некорректны, должны быть заполнены все поля",
       });
@@ -112,9 +105,9 @@ const Auth = ({ setAuthReg }) => {
                 label="Login"
                 type="text"
                 variant="outlined"
-                value={values.login}
-                onChange={(e) =>
-                  setValues({ ...values, login: e.target.value })
+                value={allState.values.login}
+                onChange={
+                  (e) => onChangeOneValue(e.target.value, "login")
                 }
               />
             </div>
@@ -126,24 +119,29 @@ const Auth = ({ setAuthReg }) => {
               <OutlinedInput
                 id="input-password"
                 name="input-password"
-                type={values.showPassword ? "text" : "password"}
-                value={values.password}
-                onChange={(e) =>
-                  setValues({ ...values, password: e.target.value })
+                type={allState.values.showPassword ? "text" : "password"}
+                value={allState.values.password}
+                onChange={
+                  (e) => onChangeOneValue(e.target.value, "password")
                 }
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      onClick={() =>
-                        setValues({
-                          ...values,
-                          showPassword: !values.showPassword,
-                        })
+                      onClick={
+                        () =>
+                          onChangeOneValue(
+                            !allState.values.showPassword,
+                            "showPassword"
+                          )
                       }
                       edge="end"
                     >
-                      {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                      {allState.values.showPassword ? (
+                        <Visibility />
+                      ) : (
+                        <VisibilityOff />
+                      )}
                     </IconButton>
                   </InputAdornment>
                 }
@@ -161,14 +159,13 @@ const Auth = ({ setAuthReg }) => {
         </form>
 
         <Snackbar
-          open={state.open}
+          open={allState.state.open}
           autoHideDuration={13000}
           onClose={() => handleClose()}
           anchorOrigin={{
             vertical: "top",
             horizontal: "center",
           }}
-          enqueueSnackbar="error"
           action={
             <React.Fragment>
               <CloseIcon color="secondary" onClick={() => handleClose()} />
@@ -181,7 +178,7 @@ const Auth = ({ setAuthReg }) => {
             onClose={() => handleClose()}
             severity="error"
           >
-            {state.text}
+            {allState.state.text}
           </MuiAlert>
         </Snackbar>
       </div>
@@ -189,4 +186,22 @@ const Auth = ({ setAuthReg }) => {
   );
 };
 
-export default Auth;
+export default connect(
+  (state) => ({
+    allState: state,
+  }),
+  (dispatch) => ({
+    onChangeAuthReg: (newObj) => {
+      dispatch({ type: "SET_AUTH_REG", newValue: newObj });
+    },
+    onChangeStateWar: (newObj) => {
+      dispatch({ type: "SET_STATE_WAR", newValue: newObj });
+    },
+    onChangeValues: (newObj) => {
+      dispatch({ type: "SET_ALL_VALUES", newValue: newObj });
+    },
+    onChangeOneValue: (val, name) => {
+      dispatch({ type: "SET_VALUE", newValue: val, name });
+    },
+  })
+)(Auth);

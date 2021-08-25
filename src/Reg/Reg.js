@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import { connect } from "react-redux";
 import {
   IconButton,
   OutlinedInput,
@@ -17,42 +18,39 @@ import CloseIcon from "@material-ui/icons/Close";
 import medical from "../source/images/medical-2.png";
 import "./Reg.scss";
 
-const Reg = ({ setAuthReg }) => {
+const Reg = ({
+  allState,
+  onChangeAuthReg,
+  onChangeValues,
+  onChangeOneValue,
+  onChangeStateWar,
+}) => {
   const history = useHistory();
 
-  const [state, setState] = useState({
-    open: false,
-    text: "",
-  });
-  const [values, setValues] = useState({
-    login: "",
-    password: "",
-    showPassword: false,
-    showPasswordRepeat: false,
-    passwordRepeat: "",
-  });
-
   useEffect(() => {
-    setAuthReg({ text: "Зарегистрироваться в системе", login: "" });
-  }, [setAuthReg]);
+    onChangeAuthReg({ text: "Зарегистрироваться в системе", login: "" });
+  }, []);
 
   const checkPass = () => {
     const regexp = /((?=.*[0-9])(?=.*[a-zA-Z]).{6,})/g;
-    return regexp.test(values.password) && !/[а-яА-Я]/.test(values.password);
+    return (
+      regexp.test(allState.values.password) &&
+      !/[а-яА-Я]/.test(allState.values.password)
+    );
   };
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
-    setState({
+    onChangeStateWar({
       open: false,
       text: "",
     });
   };
 
   const goToAuth = () => {
-    setAuthReg({ text: "Вход в систему", login: "" });
+    onChangeAuthReg({ text: "Вход в систему", login: "" });
     history.push("/authorization");
   };
 
@@ -62,7 +60,7 @@ const Reg = ({ setAuthReg }) => {
     if (
       formData.get("input-login").length >= 6 &&
       checkPass() &&
-      values.password === values.passwordRepeat
+      allState.values.password === allState.values.passwordRepeat
     ) {
       await axios
         .post("http://localhost:8080/user/post", {
@@ -73,8 +71,8 @@ const Reg = ({ setAuthReg }) => {
           const { login, token } = res.data;
           localStorage.setItem("token", token);
           localStorage.setItem("login", login);
-          setAuthReg({ text: "Приемы", login });
-          setValues({
+          onChangeAuthReg({ text: "Приемы", login });
+          onChangeValues({
             login: "",
             password: "",
             showPassword: false,
@@ -85,14 +83,14 @@ const Reg = ({ setAuthReg }) => {
         })
         .catch((err) => {
           if (err.response.status === 421) {
-            setState({
+            onChangeStateWar({
               open: true,
               text: "Пользователь с таким логином уже зарегистрирован",
             });
           }
         });
     } else {
-      setState({
+      onChangeStateWar({
         open: true,
         text: "Вводимые значения некорректны, длина строк должна быть не меньше 6, в пароле должны присутствовать цифры и латинские символы",
       });
@@ -113,10 +111,8 @@ const Reg = ({ setAuthReg }) => {
                 label="Login"
                 type="text"
                 variant="outlined"
-                value={values.login}
-                onChange={(e) =>
-                  setValues({ ...values, login: e.target.value })
-                }
+                value={allState.values.login}
+                onChange={(e) => onChangeOneValue(e.target.value, "login")}
               />
             </div>
 
@@ -127,24 +123,26 @@ const Reg = ({ setAuthReg }) => {
               <OutlinedInput
                 id="input-password"
                 name="input-password"
-                type={values.showPassword ? "text" : "password"}
-                value={values.password}
-                onChange={(e) =>
-                  setValues({ ...values, password: e.target.value })
-                }
+                type={allState.values.showPassword ? "text" : "password"}
+                value={allState.values.password}
+                onChange={(e) => onChangeOneValue(e.target.value, "password")}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
                       onClick={() =>
-                        setValues({
-                          ...values,
-                          showPassword: !values.showPassword,
-                        })
+                        onChangeOneValue(
+                          !allState.values.showPassword,
+                          "showPassword"
+                        )
                       }
                       edge="end"
                     >
-                      {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                      {allState.values.showPassword ? (
+                        <Visibility />
+                      ) : (
+                        <VisibilityOff />
+                      )}
                     </IconButton>
                   </InputAdornment>
                 }
@@ -159,24 +157,24 @@ const Reg = ({ setAuthReg }) => {
               <OutlinedInput
                 id="input-password-repeat"
                 name="input-password-repeat"
-                type={values.showPasswordRepeat ? "text" : "password"}
-                value={values.passwordRepeat}
+                type={allState.values.showPasswordRepeat ? "text" : "password"}
+                value={allState.values.passwordRepeat}
                 onChange={(e) =>
-                  setValues({ ...values, passwordRepeat: e.target.value })
+                  onChangeOneValue(e.target.value, "passwordRepeat")
                 }
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password repeat visibility"
                       onClick={() =>
-                        setValues({
-                          ...values,
-                          showPasswordRepeat: !values.showPasswordRepeat,
-                        })
+                        onChangeOneValue(
+                          !allState.values.showPasswordRepeat,
+                          "showPasswordRepeat"
+                        )
                       }
                       edge="end"
                     >
-                      {values.showPasswordRepeat ? (
+                      {allState.values.showPasswordRepeat ? (
                         <Visibility />
                       ) : (
                         <VisibilityOff />
@@ -198,7 +196,7 @@ const Reg = ({ setAuthReg }) => {
         </form>
 
         <Snackbar
-          open={state.open}
+          open={allState.state.open}
           autoHideDuration={13000}
           onClose={() => handleClose()}
           anchorOrigin={{
@@ -218,7 +216,7 @@ const Reg = ({ setAuthReg }) => {
             onClose={() => handleClose()}
             severity="error"
           >
-            {state.text}
+            {allState.state.text}
           </MuiAlert>
         </Snackbar>
       </div>
@@ -226,4 +224,22 @@ const Reg = ({ setAuthReg }) => {
   );
 };
 
-export default Reg;
+export default connect(
+  (state) => ({
+    allState: state,
+  }),
+  (dispatch) => ({
+    onChangeAuthReg: (newObj) => {
+      dispatch({ type: "SET_AUTH_REG", newValue: newObj });
+    },
+    onChangeStateWar: (newObj) => {
+      dispatch({ type: "SET_STATE_WAR", newValue: newObj });
+    },
+    onChangeValues: (newObj) => {
+      dispatch({ type: "SET_ALL_VALUES", newValue: newObj });
+    },
+    onChangeOneValue: (val, name) => {
+      dispatch({ type: "SET_VALUE", newValue: val, name });
+    },
+  })
+)(Reg);

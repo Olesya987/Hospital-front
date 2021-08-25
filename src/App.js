@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Route, Switch, Redirect, Link } from "react-router-dom";
+import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import Auth from "./Auth/Auth";
 import Reg from "./Reg/Reg";
@@ -7,12 +8,10 @@ import Appointments from "./Appointments/Appointments";
 import icon from "./source/images/icon.png";
 import "./App.scss";
 
-function App() {
-  const [authReg, setAuthReg] = useState({});
-
+function App({ allState, onChangeAuthReg }) {
   const goToAuth = () => {
     localStorage.clear();
-    setAuthReg({ text: "Вход в систему", login: "" });
+    onChangeAuthReg({ text: "Вход в систему", login: "" });
   };
 
   return (
@@ -20,12 +19,12 @@ function App() {
       <header className="App-header">
         <div>
           <img className="App-logo" src={icon} alt="logo"></img>
-          <h1>{authReg.text}</h1>
+          <h1>{allState.authReg.text}</h1>
         </div>
 
-        {authReg.login && (
+        {allState.authReg.login && (
           <div>
-            <h4>{authReg.login}</h4>
+            <h4>{allState.authReg.login}</h4>
             <Link to="/authorization">
               <Button
                 variant="outlined"
@@ -42,13 +41,13 @@ function App() {
 
       <Switch>
         <Route path="/authorization">
-          <Auth setAuthReg={setAuthReg} />
+          <Auth />
         </Route>
         <Route path="/registration">
-          <Reg setAuthReg={setAuthReg} />
+          <Reg />
         </Route>
         <Route path="/appointments">
-          <Appointments setAuthReg={setAuthReg} />
+          <Appointments />
         </Route>
         <Redirect from="/" to="/authorization" />
       </Switch>
@@ -56,4 +55,13 @@ function App() {
   );
 }
 
-export default App;
+export default connect(
+  (state) => ({
+    allState: state,
+  }),
+  (dispatch) => ({
+    onChangeAuthReg: (newObj) => {
+      dispatch({ type: "SET_AUTH_REG", newValue: newObj });
+    },
+  })
+)(App);

@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import {
   Table,
   TableBody,
@@ -13,7 +14,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import "./TableApp.scss";
 
-const TableApp = ({ data, characters, changeDelProps, changeEditProps }) => {
+const TableApp = ({ allState, onChangeModal }) => {
   const tableCellValues = (name, index) => {
     return (
       <TableCell
@@ -26,6 +27,20 @@ const TableApp = ({ data, characters, changeDelProps, changeEditProps }) => {
         {name}
       </TableCell>
     );
+  };
+
+  const changeEditProps = (flag, changeRow) => {
+    onChangeModal({
+      open: flag,
+      changeRow,
+    });
+  };
+
+  const changeDelProps = (flag, id) => {
+    onChangeModal({
+      open: flag,
+      id,
+    });
   };
 
   const tableCellButtons = (row, index) => {
@@ -59,8 +74,8 @@ const TableApp = ({ data, characters, changeDelProps, changeEditProps }) => {
       >
         <TableHead>
           <TableRow>
-            {characters.length ? (
-              characters.map((value, index) => (
+            {allState.characters.length ? (
+              allState.characters.map((value, index) => (
                 <TableCell
                   key={index}
                   align="center"
@@ -77,10 +92,10 @@ const TableApp = ({ data, characters, changeDelProps, changeEditProps }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data &&
-            data.map((row) => (
+          {allState.data.length &&
+            allState.data.map((row) => (
               <TableRow hover key={row._id}>
-                {characters.map((name, index) =>
+                {allState.characters.map((name, index) =>
                   name.immediately
                     ? tableCellValues(row[name.immediately], index)
                     : tableCellButtons(row, index)
@@ -93,4 +108,22 @@ const TableApp = ({ data, characters, changeDelProps, changeEditProps }) => {
   );
 };
 
-export default TableApp;
+export default connect(
+  (state) => ({
+    allState: state,
+  }),
+  (dispatch) => ({
+    onChangeCharacters: (arr) => {
+      dispatch({ type: "SET_CHARACTERS", newValue: arr });
+    },
+    reFlag: () => {
+      dispatch({ type: "SET_FLAG" });
+    },
+    onChangeData: (arr) => {
+      dispatch({ type: "SET_DATA", newValue: arr });
+    },
+    onChangeModal: (obj) => {
+      dispatch({ type: "SET_ALL_PROPS", newValue: obj });
+    },
+  })
+)(TableApp);

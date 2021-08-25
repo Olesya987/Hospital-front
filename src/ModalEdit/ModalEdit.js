@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { connect } from "react-redux";
 import {
   Dialog,
   DialogActions,
@@ -17,12 +18,7 @@ import MuiAlert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
 import "./ModalEdit.scss";
 
-const ModalEdit = ({
-  open,
-  changeRow,
-  onCloseModalEdit,
-  onSaveChangesModal,
-}) => {
+const ModalEdit = ({ allState, reFlag, onChangeModal }) => {
   const [changes, setChanges] = useState({});
   const doctors = [
     "Зайцева Афродита Петровна",
@@ -36,9 +32,9 @@ const ModalEdit = ({
 
   useEffect(() => {
     if (!changes.name) {
-      setChanges(changeRow);
+      setChanges(allState.modalProps.changeRow);
     }
-  }, [changeRow, changes.name]);
+  }, [allState.modalProps.changeRow]);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -48,6 +44,18 @@ const ModalEdit = ({
     setState({
       open: false,
       text: "",
+    });
+  };
+
+  const onSaveChangesModal = () => {
+    reFlag();
+    onCloseModalEdit();
+  };
+
+  const onCloseModalEdit = () => {
+    onChangeModal({
+      open: false,
+      changeRow: {},
     });
   };
 
@@ -84,7 +92,7 @@ const ModalEdit = ({
 
   return (
     <Dialog
-      open={open}
+      open={allState.modalProps.open}
       onClose={() => onCloseModalEdit()}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
@@ -187,7 +195,6 @@ const ModalEdit = ({
           vertical: "top",
           horizontal: "center",
         }}
-        enqueueSnackbar="error2"
         action={
           <React.Fragment>
             <CloseIcon color="secondary" onClick={() => handleClose()} />
@@ -207,4 +214,19 @@ const ModalEdit = ({
   );
 };
 
-export default ModalEdit;
+export default connect(
+  (state) => ({
+    allState: state,
+  }),
+  (dispatch) => ({
+    reFlag: () => {
+      dispatch({ type: "SET_FLAG" });
+    },
+    onChangeStateWar: (newObj) => {
+      dispatch({ type: "SET_STATE_WAR", newValue: newObj });
+    },
+    onChangeModal: (obj) => {
+      dispatch({ type: "SET_ALL_PROPS", newValue: obj });
+    },
+  })
+)(ModalEdit);
