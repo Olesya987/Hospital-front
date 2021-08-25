@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { connect } from "react-redux";
@@ -25,6 +25,7 @@ const Reg = ({
   onChangeOneValue,
   onChangeStateWar,
 }) => {
+  const { values, state } = allState;
   const history = useHistory();
 
   useEffect(() => {
@@ -33,10 +34,7 @@ const Reg = ({
 
   const checkPass = () => {
     const regexp = /((?=.*[0-9])(?=.*[a-zA-Z]).{6,})/g;
-    return (
-      regexp.test(allState.values.password) &&
-      !/[а-яА-Я]/.test(allState.values.password)
-    );
+    return regexp.test(values.password) && !/[а-яА-Я]/.test(values.password);
   };
 
   const handleClose = (event, reason) => {
@@ -60,7 +58,7 @@ const Reg = ({
     if (
       formData.get("input-login").length >= 6 &&
       checkPass() &&
-      allState.values.password === allState.values.passwordRepeat
+      values.password === values.passwordRepeat
     ) {
       await axios
         .post("http://localhost:8080/user/post", {
@@ -111,7 +109,7 @@ const Reg = ({
                 label="Login"
                 type="text"
                 variant="outlined"
-                value={allState.values.login}
+                value={values.login}
                 onChange={(e) => onChangeOneValue(e.target.value, "login")}
               />
             </div>
@@ -123,26 +121,19 @@ const Reg = ({
               <OutlinedInput
                 id="input-password"
                 name="input-password"
-                type={allState.values.showPassword ? "text" : "password"}
-                value={allState.values.password}
+                type={values.showPassword ? "text" : "password"}
+                value={values.password}
                 onChange={(e) => onChangeOneValue(e.target.value, "password")}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
                       onClick={() =>
-                        onChangeOneValue(
-                          !allState.values.showPassword,
-                          "showPassword"
-                        )
+                        onChangeOneValue(!values.showPassword, "showPassword")
                       }
                       edge="end"
                     >
-                      {allState.values.showPassword ? (
-                        <Visibility />
-                      ) : (
-                        <VisibilityOff />
-                      )}
+                      {values.showPassword ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
                   </InputAdornment>
                 }
@@ -157,8 +148,8 @@ const Reg = ({
               <OutlinedInput
                 id="input-password-repeat"
                 name="input-password-repeat"
-                type={allState.values.showPasswordRepeat ? "text" : "password"}
-                value={allState.values.passwordRepeat}
+                type={values.showPasswordRepeat ? "text" : "password"}
+                value={values.passwordRepeat}
                 onChange={(e) =>
                   onChangeOneValue(e.target.value, "passwordRepeat")
                 }
@@ -168,13 +159,13 @@ const Reg = ({
                       aria-label="toggle password repeat visibility"
                       onClick={() =>
                         onChangeOneValue(
-                          !allState.values.showPasswordRepeat,
+                          !values.showPasswordRepeat,
                           "showPasswordRepeat"
                         )
                       }
                       edge="end"
                     >
-                      {allState.values.showPasswordRepeat ? (
+                      {values.showPasswordRepeat ? (
                         <Visibility />
                       ) : (
                         <VisibilityOff />
@@ -196,14 +187,13 @@ const Reg = ({
         </form>
 
         <Snackbar
-          open={allState.state.open}
+          open={state.open}
           autoHideDuration={13000}
           onClose={() => handleClose()}
           anchorOrigin={{
             vertical: "top",
             horizontal: "center",
           }}
-          enqueueSnackbar="error"
           action={
             <React.Fragment>
               <CloseIcon color="secondary" onClick={() => handleClose()} />
@@ -216,7 +206,7 @@ const Reg = ({
             onClose={() => handleClose()}
             severity="error"
           >
-            {allState.state.text}
+            {state.text}
           </MuiAlert>
         </Snackbar>
       </div>

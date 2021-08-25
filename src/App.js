@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Route, Switch, Redirect, Link } from "react-router-dom";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
@@ -9,6 +9,7 @@ import icon from "./source/images/icon.png";
 import "./App.scss";
 
 function App({ allState, onChangeAuthReg }) {
+  const { authReg } = allState;
   const goToAuth = () => {
     localStorage.clear();
     onChangeAuthReg({ text: "Вход в систему", login: "" });
@@ -19,12 +20,12 @@ function App({ allState, onChangeAuthReg }) {
       <header className="App-header">
         <div>
           <img className="App-logo" src={icon} alt="logo"></img>
-          <h1>{allState.authReg.text}</h1>
+          <h1>{authReg.text}</h1>
         </div>
 
-        {allState.authReg.login && (
+        {authReg.login && (
           <div>
-            <h4>{allState.authReg.login}</h4>
+            <h4>{authReg.login}</h4>
             <Link to="/authorization">
               <Button
                 variant="outlined"

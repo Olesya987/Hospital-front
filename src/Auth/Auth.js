@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { connect } from "react-redux";
@@ -25,6 +25,7 @@ const Auth = ({
   onChangeValues,
   onChangeOneValue,
 }) => {
+  const { state, values } = allState;
   const history = useHistory();
 
   const handleClose = (event, reason) => {
@@ -54,7 +55,7 @@ const Auth = ({
       formData.get("input-login").length !== 0 &&
       formData.get("input-password").length !== 0
     ) {
-      const { login, password } = allState.values;
+      const { login, password } = values;
       await axios
         .post("http://localhost:8080/user/get", {
           login,
@@ -105,10 +106,8 @@ const Auth = ({
                 label="Login"
                 type="text"
                 variant="outlined"
-                value={allState.values.login}
-                onChange={
-                  (e) => onChangeOneValue(e.target.value, "login")
-                }
+                value={values.login}
+                onChange={(e) => onChangeOneValue(e.target.value, "login")}
               />
             </div>
 
@@ -119,29 +118,19 @@ const Auth = ({
               <OutlinedInput
                 id="input-password"
                 name="input-password"
-                type={allState.values.showPassword ? "text" : "password"}
-                value={allState.values.password}
-                onChange={
-                  (e) => onChangeOneValue(e.target.value, "password")
-                }
+                type={values.showPassword ? "text" : "password"}
+                value={values.password}
+                onChange={(e) => onChangeOneValue(e.target.value, "password")}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      onClick={
-                        () =>
-                          onChangeOneValue(
-                            !allState.values.showPassword,
-                            "showPassword"
-                          )
+                      onClick={() =>
+                        onChangeOneValue(!values.showPassword, "showPassword")
                       }
                       edge="end"
                     >
-                      {allState.values.showPassword ? (
-                        <Visibility />
-                      ) : (
-                        <VisibilityOff />
-                      )}
+                      {values.showPassword ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
                   </InputAdornment>
                 }
@@ -159,7 +148,7 @@ const Auth = ({
         </form>
 
         <Snackbar
-          open={allState.state.open}
+          open={state.open}
           autoHideDuration={13000}
           onClose={() => handleClose()}
           anchorOrigin={{
@@ -178,7 +167,7 @@ const Auth = ({
             onClose={() => handleClose()}
             severity="error"
           >
-            {allState.state.text}
+            {state.text}
           </MuiAlert>
         </Snackbar>
       </div>

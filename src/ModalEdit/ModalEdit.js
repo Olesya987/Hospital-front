@@ -29,12 +29,13 @@ const ModalEdit = ({ allState, reFlag, onChangeModal }) => {
     open: false,
     text: "",
   });
+  const { modalProps } = allState;
 
   useEffect(() => {
     if (!changes.name) {
-      setChanges(allState.modalProps.changeRow);
+      setChanges(modalProps.changeRow);
     }
-  }, [allState.modalProps.changeRow]);
+  }, [modalProps.changeRow]);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -92,7 +93,7 @@ const ModalEdit = ({ allState, reFlag, onChangeModal }) => {
 
   return (
     <Dialog
-      open={allState.modalProps.open}
+      open={modalProps.open}
       onClose={() => onCloseModalEdit()}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"

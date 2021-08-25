@@ -9,27 +9,23 @@ import Filter from "../Filter/Filter";
 import TableApp from "../TableApp/TableApp";
 import "./AppGrid.scss";
 
-const AppGrid = ({
-  allState,
-  onChangeData,
-  onChangeCharacters,
-  reFlag,
-}) => {
+const AppGrid = ({ allState, onChangeData, onChangeCharacters, reFlag }) => {
   const [pages, setPages] = useState({
     currentPage: 1,
     rowsOnPage: 5,
     allRows: 0,
   });
   const { allRows, rowsOnPage, currentPage } = pages;
+  const { date, isFilter, sortItem, modalProps, flag } = allState;
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const { before, after } = allState.date;
-    const { value, direction } = allState.sortItem;
+    const { before, after } = date;
+    const { value, direction } = sortItem;
     axios
       .post(
         `http://localhost:8080/appointment/get`,
-        allState.isFilter
+        isFilter
           ? {
               currentPage,
               rowsOnPage,
@@ -77,20 +73,13 @@ const AppGrid = ({
         setPages({ ...pages, allRows });
         if (
           currentPage > Math.ceil(allRows / rowsOnPage) &&
-          !appointments.length
+          appointments.length
         ) {
           setPages({ ...pages, currentPage: 1 });
           reFlag();
         }
       });
-  }, [
-    allState.flag,
-    allState.isFilter,
-    currentPage,
-    rowsOnPage,
-    allState.sortItem,
-    reFlag,
-  ]);
+  }, [flag, isFilter, currentPage, rowsOnPage, sortItem]);
 
   const handleChangePage = (event, newPage) => {
     setPages({ ...pages, currentPage: newPage + 1 });
@@ -117,10 +106,8 @@ const AppGrid = ({
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </div>
-        {allState.modalProps.id && allState.modalProps.open && <ModalDel />}
-        {allState.modalProps.changeRow && allState.modalProps.open && (
-          <ModalEdit />
-        )}
+        {modalProps.id && modalProps.open && <ModalDel />}
+        {modalProps.changeRow && modalProps.open && <ModalEdit />}
       </div>
     </div>
   );

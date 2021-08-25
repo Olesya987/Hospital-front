@@ -12,15 +12,14 @@ import {
 import "./ModalDel.scss";
 
 const ModalDel = ({ allState, reFlag, onChangeModal }) => {
+  const { modalProps } = allState;
+
   const delFunc = () => {
     const token = localStorage.getItem("token");
     axios
-      .delete(
-        `http://localhost:8080/appointment/del?id=${allState.modalProps.id}`,
-        {
-          headers: { authorization: token },
-        }
-      )
+      .delete(`http://localhost:8080/appointment/del?id=${modalProps.id}`, {
+        headers: { authorization: token },
+      })
       .then((res) => {
         onSaveChangesModal();
       });
@@ -40,7 +39,7 @@ const ModalDel = ({ allState, reFlag, onChangeModal }) => {
 
   return (
     <Dialog
-      open={allState.modalProps.open}
+      open={modalProps.open}
       onClose={() => onCloseModalDel()}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
