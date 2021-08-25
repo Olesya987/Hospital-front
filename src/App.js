@@ -2,9 +2,9 @@ import React from "react";
 import { Route, Switch, Redirect, Link } from "react-router-dom";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
-import Auth from "./Auth/Auth";
-import Reg from "./Reg/Reg";
-import Appointments from "./Appointments/Appointments";
+import Auth from "./components/Auth/Auth";
+import Reg from "./components/Reg/Reg";
+import Appointments from "./components/Appointments/Appointments";
 import icon from "./source/images/icon.png";
 import "./App.scss";
 
