@@ -15,7 +15,7 @@ import {
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import MuiAlert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
-import medical from "../source/images/medical-2.png";
+import medical from "../../source/images/medical-2.png";
 import "./Reg.scss";
 
 const Reg = ({
@@ -66,9 +66,10 @@ const Reg = ({
           password: formData.get("input-password"),
         })
         .then((res) => {
-          const { login, token } = res.data;
+          const { login, token, img } = res.data;
           localStorage.setItem("token", token);
           localStorage.setItem("login", login);
+          localStorage.setItem("img", img);
           onChangeAuthReg({ text: "Приемы", login });
           onChangeValues({
             login: "",

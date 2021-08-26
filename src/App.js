@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import Auth from "./components/Auth/Auth";
 import Reg from "./components/Reg/Reg";
 import Appointments from "./components/Appointments/Appointments";
+import Person from "./components/Person/Person";
 import icon from "./source/images/icon.png";
 import "./App.scss";
 
@@ -12,7 +13,6 @@ function App({ allState, onChangeAuthReg }) {
   const { authReg } = allState;
   const goToAuth = () => {
     localStorage.clear();
-    onChangeAuthReg({ text: "Вход в систему", login: "" });
   };
 
   return (
@@ -25,7 +25,22 @@ function App({ allState, onChangeAuthReg }) {
 
         {authReg.login && (
           <div>
-            <h4>{authReg.login}</h4>
+            {authReg.text === "Приемы" && (
+              <Link className="person-link" to={`/person/${localStorage.getItem("login")}`}>
+                <h4>{authReg.login}</h4>
+              </Link>
+            )}
+            {authReg.text === "Личный кабинет" && (
+              <Link to="/appointments">
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  type="none"
+                >
+                  Приемы
+                </Button>
+              </Link>
+            )}
             <Link to="/authorization">
               <Button
                 variant="outlined"
@@ -43,6 +58,9 @@ function App({ allState, onChangeAuthReg }) {
       <Switch>
         <Route path="/authorization">
           <Auth />
+        </Route>
+        <Route path="/person/:login">
+          <Person />
         </Route>
         <Route path="/registration">
           <Reg />
