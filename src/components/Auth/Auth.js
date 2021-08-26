@@ -15,7 +15,7 @@ import {
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import MuiAlert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
-import medical from "../source/images/medical-2.png";
+import medical from "../../source/images/medical-2.png";
 import "./Auth.scss";
 
 const Auth = ({
