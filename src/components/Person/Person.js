@@ -15,7 +15,7 @@ const Person = ({ onChangeAuthReg }) => {
   const login = localStorage.getItem("login");
   const token = localStorage.getItem("token");
   const userAvatar = localStorage.getItem("img");
-  const [img, setImage] = useState(userAvatar ? userAvatar : avatar);
+  const [img, setImage] = useState(userAvatar || avatar);
   const [open, setOpen] = React.useState(false);
   const [{ alt, src, file }, setImg] = useState({
     src: "",
