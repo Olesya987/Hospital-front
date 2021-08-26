@@ -62,9 +62,10 @@ const Auth = ({
           password,
         })
         .then((res) => {
-          const { login, token } = res.data;
+          const { login, token, img } = res.data;
           localStorage.setItem("token", token);
           localStorage.setItem("login", login);
+          localStorage.setItem("img", img);
           onChangeAuthReg({ text: "Приемы", login });
           onChangeValues({
             login: "",

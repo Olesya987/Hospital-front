@@ -12,27 +12,19 @@ import avatar from "../../source/images/placeholder.png";
 import "./Person.scss";
 
 const Person = ({ onChangeAuthReg }) => {
-  const [img, setImage] = useState(avatar);
+  const login = localStorage.getItem("login");
+  const token = localStorage.getItem("token");
+  const userAvatar = localStorage.getItem("img");
+  const [img, setImage] = useState(userAvatar ? userAvatar : avatar);
   const [open, setOpen] = React.useState(false);
   const [{ alt, src, file }, setImg] = useState({
     src: "",
     alt: "your image",
     file: null,
   });
-  const login = localStorage.getItem("login");
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     onChangeAuthReg({ text: "Личный кабинет", login });
-    axios
-      .get("http://localhost:8080/user/getUser", {
-        headers: { authorization: token },
-      })
-      .then((res) => {
-        if (res.data) {
-          setImage(res.data);
-        }
-      });
   }, []);
 
   const handleImg = (e) => {
@@ -55,6 +47,7 @@ const Person = ({ onChangeAuthReg }) => {
       })
       .then((res) => {
         setImage(res.data);
+        localStorage.setItem("img", res.data);
         handleClose();
       });
   };
